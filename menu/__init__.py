@@ -1,0 +1,1 @@
+from menu.app import app
