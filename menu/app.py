@@ -19,6 +19,10 @@ def startup():
     config['cache'] = config['cache'].replace('$HERE', os.path.join(currentDir, '..'))
     fetch = Fetcher(config)
 
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
+
 
 @app.route('/week')
 def week():
