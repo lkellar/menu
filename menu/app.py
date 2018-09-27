@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 import os
 import json
+from datetime import datetime
 
 from menu.fetcher import Fetcher
 from menu.util import genDate, getMonday
+from menu.gen import genHTML
 
 app = Flask(__name__, static_url_path='/static', static_folder='../static/')
 fetch = None
@@ -21,6 +23,12 @@ def startup():
 
 @app.route('/')
 def index():
+    date = datetime.today()
+    data = fetch.week(getMonday(date))
+    return genHTML(data, request.url_root, date)
+
+@app.route('/info')
+def info():
     return app.send_static_file('index.html')
 
 

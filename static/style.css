@@ -1,0 +1,47 @@
+body {
+    background-color: #c4c4c4;
+    font-family: sans-serif;
+}
+
+.day {
+    /*height: 95vh;*/
+    text-align: center;
+    position: absolute;
+    width: 27vw;
+    border-radius: 50px;
+    background-color: white;
+    padding: 1% 1% 0 1%;
+}
+
+.current {
+    margin: 0 35vw;
+}
+
+.after {
+    margin-left: 70vw;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 1% 0;
+}
+
+h2 {
+    margin: 0 10%;
+    font-size: x-large;
+}
+
+footer {
+    text-align: center;
+    background: white;
+    padding: 1%;
+    border-radius: 50px;
+    position: absolute;
+    width: 40%;
+    margin: 0 30%;
+    bottom: 0;
+}

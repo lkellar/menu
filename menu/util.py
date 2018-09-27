@@ -19,7 +19,7 @@ def getMonday(date: datetime = datetime.today()) -> datetime:
 
 
 def multiMonth(date: datetime) -> bool:
-    monday = date - timedelta(days=(date.weekday()))
+    monday = date - timedelta(days=(datetime.today().weekday()))
     friday = date + timedelta(days=(4-date.weekday()))
 
     if monday.month == friday.month:
