@@ -25,7 +25,9 @@ def genHTML(data, urlRoot, date):
         link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
 
     with doc:
+        link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
         img(_class='arrow', id='left', src='{}static/assets/left.svg'.format(urlRoot))
+        img(_class='arrow', id='right', src='{}static/assets/right.svg'.format(urlRoot))
         with div(id='main'):
             iteration = 0
             for x in ['before', 'current', 'after']:
@@ -41,5 +43,5 @@ def genHTML(data, urlRoot, date):
                     iteration += 1
         footer(raw(
             '<p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>.\n<a href="https://fontawesome.com/license/free">License</a>. No changes to images were made.'))
-
+        script(type='text/javascript', src='{}static/script.js'.format(urlRoot))
     return doc.render()

@@ -1,21 +1,22 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-import json
-import io
+from dateutil.relativedelta import relativedelta
 
 class Scraper:
-    def __init__(self, saveLoc: str, url: str, menu: str):
-        self.saveLoc = saveLoc
+    def __init__(self, url: str, menu: str, months: int = 0):
         self.url = url
         self.menu = menu
+        nextMonth = datetime.today() + relativedelta(months=months)
+        self.month = nextMonth.month
+        self.year = nextMonth.year
 
     def go(self):
-        data = self.parse(self.fetch(self.url))
-        self.save(self.saveLoc, data)
+        return self.parse(self.fetch(self.url))
 
     def fetch(self, url) -> str:
-        return requests.get('https://myschooldining.com/{}'.format(url)).text
+        params = {'adj': 0, 'current_month': '{}-{}-01'.format(self.year, self.month)}
+        return requests.post('https://myschooldining.com/{}/calendarMonth'.format(url), params=params).text
 
     def parse(self, html) -> dict:
         soup = BeautifulSoup(html, 'html.parser')
@@ -48,6 +49,5 @@ class Scraper:
     def strip(self, text):
         return text.replace("\xa0", "").replace("\n", "").strip()
 
-    def save(self, saveLoc, data):
-        with io.open(saveLoc, 'w', encoding='utf8') as f:
-            json.dump(data, f, ensure_ascii=False)
+if __name__ == '__main__':
+    print(Scraper('thenewschool', 'diningroom').go())

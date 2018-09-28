@@ -11,10 +11,16 @@ body {
     border-radius: 50px;
     background-color: white;
     padding: 1% 1% 0 1%;
+    display: none;
 }
 
 .current {
     margin: 0 35vw;
+    display: inherit;
+}
+
+.visible {
+    display: inherit !important;
 }
 
 .after {
@@ -44,4 +50,19 @@ footer {
     width: 40%;
     margin: 0 30%;
     bottom: 0;
+}
+
+.arrow {
+    width: 3vw;
+    position: absolute;
+    bottom: 50vh;
+    margin: 0 0.5vw
+}
+
+#left {
+    left: 0;
+}
+
+#right {
+    right: 0;
 }
