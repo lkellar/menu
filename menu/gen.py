@@ -7,7 +7,7 @@ from datetime import datetime, timedelta
 def genHTML(data, urlRoot, date, entry=None):
 
     keys = sorted(data.keys())
-    menus = sorted(data.values(), key=lambda x: x[0])
+    menus = [data[i] for i in keys]
 
     if date.strftime('%Y-%m-%d') not in keys:
         for i in range(0, 5):
