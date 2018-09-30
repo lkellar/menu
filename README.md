@@ -1,10 +1,12 @@
-# MySchoolDining API
-A Nifty API for MySchoolDining
+# mySchoolDining API
+A Nifty API/Website for mySchoolDining
 
 ## About
 This project is a Flask web server that fetches, caches, and serves data from MySchoolDining.
 
-It can present data in pure JSON, for a whole week, for different dates, and even human readable text for serving directly to users [(See Siri Shortcut)](#Shortcut)
+It presents its data to users via a simplified website. [See Website Section](#website)
+
+It can also present data in pure JSON, for a whole week, for different dates, and even human readable text for serving directly to users [(See Siri Shortcut)](#shortcut)
 
 ## Installation
 
@@ -32,6 +34,17 @@ export FLASK_APP=menu/app.py
 flask run   
 ```
 
+## Website
+Instead of dealing with the mySchoolDining website, this project provides a nice simplified alternative.
+
+![example](screenshots/site.png)
+
+Without any parameters, users will be presented with the days menu, and can easily browse the menu for the rest of the week.
+
+Users can browse with the arrows on the site, the arrow keys, or the A and D keys.
+
+Users can also view data from the current month, and one month in advance. 
+
 ## API Endpoints
 
 #### `/api`
@@ -42,6 +55,8 @@ Returns menu for a specified date
 
 #### `/week`
 Returns menu for current week in JSON
+##### Query Args
+* `weeks` (Number): How many weeks in the future to fetch
 
 ## Shortcut
 Want to ask Siri for the menu? (iOS 12 only)

@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 import os
 import json
-from datetime import datetime
 
 from menu.fetcher import Fetcher
 from menu.util import genDate, getMonday
@@ -10,6 +9,7 @@ from menu.gen import genHTML
 app = Flask(__name__, static_url_path='/static', static_folder='../static/')
 fetch = None
 
+errormsg = 'The requested menu data is not available now'
 
 @app.before_first_request
 def startup():
@@ -23,18 +23,29 @@ def startup():
 
 @app.route('/')
 def index():
-    date = datetime.today()
+    modifier = 0
+    weeks = request.args.get('weeks')
+    if weeks:
+        modifier = int(weeks) * 7
+    entry = request.args.get('entry')
+    if not entry:
+        entry = None
+    date = genDate(modifier)
     data = fetch.week(getMonday(date))
-    return genHTML(data, request.url_root, date)
-
-@app.route('/info')
-def info():
-    return app.send_static_file('index.html')
-
+    valid = {key: value for key, value in data.items() if value != errormsg}
+    if len(valid) == 0:
+        return app.send_static_file('error.html')
+    else:
+        return genHTML(valid, request.url_root, date, entry)
 
 @app.route('/week')
 def week():
-    return jsonify(fetch.week(getMonday()))
+    modifier = 0
+    weeks = request.args.get('weeks')
+    if weeks:
+        modifier = int(weeks) * 7
+    date = genDate(modifier)
+    return jsonify(fetch.week(getMonday(date)))
 
 
 @app.route('/api')
