@@ -49,5 +49,3 @@ class Scraper:
     def strip(self, text):
         return text.replace("\xa0", "").replace("\n", "").strip()
 
-if __name__ == '__main__':
-    print(Scraper('thenewschool', 'diningroom').go())

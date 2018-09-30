@@ -16,15 +16,18 @@ body {
 
 .current {
     margin: 0 35vw;
-    display: inherit;
 }
 
 .visible {
     display: inherit !important;
 }
 
+.before {
+    margin-left: 4vw;
+}
+
 .after {
-    margin-left: 70vw;
+    margin-left: 66vw;
 }
 
 ul {

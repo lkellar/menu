@@ -14,7 +14,9 @@ class Fetcher:
         data = {}
         for i in range(0,5):
             date = monday + timedelta(days=i)
-            data.update(self.get(False, date))
+            menuData = self.get(False, date)
+            if len(menuData[date.strftime('%Y-%m-%d')]) > 0:
+                data.update(menuData)
         return data
 
     def get(self, prettify: bool, date: datetime):
@@ -27,6 +29,7 @@ class Fetcher:
                     return self.get(prettify, date)
 
             isoDate = date.strftime('%Y-%m-%d')
+            currentMonth = datetime.today().month
             if isoDate in cache:
                 menuData = cache[isoDate]
                 if prettify:
@@ -34,10 +37,12 @@ class Fetcher:
                 else:
                     menuData = {isoDate: menuData}
                 return menuData
-            elif date.month is not datetime.today().month:
+            elif date.month == currentMonth + 1:
                 next = self.scrape(1)
                 self.save({**cache, **next})
                 return self.get(prettify, date)
+            elif date.month is not currentMonth:
+                return {isoDate: 'The requested menu data is not available now'}
             else:
                 self.save(self.scrape())
                 return self.get(prettify, date)
