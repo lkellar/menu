@@ -14,6 +14,8 @@ function init() {
     if (after) {
         after.classList.add('visible');
     }
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchmove', handleTouchMove, false);
 }
 
 function change(left) {
@@ -25,7 +27,10 @@ function change(left) {
             }
             document.getElementsByClassName('current')[0].classList.replace('current', 'before');
             document.getElementsByClassName('after visible')[0].classList.replace('after', 'current');
-            document.getElementsByClassName('after')[0].classList.add('visible');
+            const after = document.getElementsByClassName('after')[0];
+            if (after) {
+            after.classList.add('visible');
+            }
         }  else {
             changeWeek(true);
         }
@@ -38,7 +43,10 @@ function change(left) {
             document.getElementsByClassName('current')[0].classList.replace('current', 'after');
             document.getElementsByClassName('before visible')[0].classList.replace('before', 'current');
             const beforeList = document.getElementsByClassName('before');
-            beforeList[beforeList.length - 1].classList.add('visible');
+            const before = beforeList[beforeList.length - 1]
+            if (before) {
+                before.classList.add('visible');
+            }
         }
         else {
             changeWeek(false);
@@ -65,6 +73,36 @@ function changeWeek(add) {
 
 }
 
+function handleTouchStart(evt) {
+    xDown = evt.touches[0].clientX;
+    yDown = evt.touches[0].clientY;
+}
+
+function handleTouchMove(evt) {
+    if ( ! xDown || ! yDown ) {
+        return;
+    }
+
+    var xUp = evt.touches[0].clientX;
+    var yUp = evt.touches[0].clientY;
+
+    var xDiff = xDown - xUp;
+    var yDiff = yDown - yUp;
+
+    if ( Math.abs( xDiff ) > Math.abs( yDiff ) ) {/*most significant*/
+        if (Math.abs(xDiff) > 10) {
+            if (xDiff > 0) {
+                change(true)
+            } else {
+                change(false)
+            }
+        }
+    }
+    /* reset values */
+    xDown = null;
+    yDown = null;
+}
+
 function keyPress(oToCheckField, oKeyEvent) {
         if (oKeyEvent.key === 'ArrowRight' || oKeyEvent.key === 'd') {
             change(true)
@@ -73,4 +111,6 @@ function keyPress(oToCheckField, oKeyEvent) {
         }
     }
 
+let xDown = null;
+let yDown = null;
 init();

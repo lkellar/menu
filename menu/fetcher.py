@@ -12,7 +12,7 @@ class Fetcher:
 
     def week(self, monday: datetime):
         data = {}
-        for i in range(0,5):
+        for i in range(0, 5):
             date = monday + timedelta(days=i)
             menuData = self.get(False, date)
             if len(menuData[date.strftime('%Y-%m-%d')]) > 0:
