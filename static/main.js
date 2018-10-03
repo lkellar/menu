@@ -25,11 +25,16 @@ function change(left) {
             if (before) {
                 before.classList.remove('visible');
             }
-            document.getElementsByClassName('current')[0].classList.replace('current', 'before');
-            document.getElementsByClassName('after visible')[0].classList.replace('after', 'current');
+            const oldCurrent = document.getElementById('current');
+            oldCurrent.removeAttribute('id');
+            oldCurrent.classList.add('before', 'visible');
+
+            const newCurrent = document.getElementsByClassName('after visible')[0];
+            newCurrent.classList.remove('after', 'visible');
+            newCurrent.id = 'current';
             const after = document.getElementsByClassName('after')[0];
             if (after) {
-            after.classList.add('visible');
+                after.classList.add('visible');
             }
         }  else {
             changeWeek(true);
@@ -40,10 +45,16 @@ function change(left) {
             if (after) {
                 after.classList.remove('visible');
             }
-            document.getElementsByClassName('current')[0].classList.replace('current', 'after');
-            document.getElementsByClassName('before visible')[0].classList.replace('before', 'current');
+            const oldCurrent = document.getElementById('current');
+            oldCurrent.removeAttribute('id');
+            oldCurrent.classList.add('after', 'visible');
+
+            const newCurrent = document.getElementsByClassName('before visible')[0];
+            newCurrent.classList.remove('before', 'visible');
+            newCurrent.id = 'current';
+
             const beforeList = document.getElementsByClassName('before');
-            const before = beforeList[beforeList.length - 1]
+            const before = beforeList[beforeList.length - 1];
             if (before) {
                 before.classList.add('visible');
             }
