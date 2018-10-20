@@ -67,6 +67,11 @@ footer {
 #right {
     right: 0;
 }
+
+.hidden {
+    background-color: #c4c4c4;
+}
+
 @media only screen and (orientation: portrait) {
     .visible {
       display: none;

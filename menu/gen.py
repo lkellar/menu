@@ -33,6 +33,7 @@ def genHTML(data, urlRoot, date, entry=None):
             img(_class='arrow', id='left', onclick='change(false);', src='{}static/assets/left.svg'.format(urlRoot))
             img(_class='arrow', id='right', onclick='change(true);', src='{}static/assets/right.svg'.format(urlRoot))
             with div(id='main'):
+                div(_class='day before hidden')
                 with div(_class='day before'):
                     h3('Go left to see previous weeks')
                 iteration = 0
@@ -48,6 +49,7 @@ def genHTML(data, urlRoot, date, entry=None):
                     iteration += 1
                 with div(_class='day after'):
                     h3('Go right to see future weeks')
+                div(_class='day after hidden')
             footer(raw(
                 '<p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>. <a href="https://fontawesome.com/license/free">License</a>. No changes to images were made.' +
                 '<br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a>'))

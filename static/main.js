@@ -20,7 +20,7 @@ function init() {
 
 function change(left) {
     if (left) {
-        if (document.getElementsByClassName('after').length > 0) {
+        if (document.getElementsByClassName('after').length > 1) {
             const before = document.getElementsByClassName('before visible')[0];
             if (before) {
                 before.classList.remove('visible');
@@ -40,7 +40,7 @@ function change(left) {
             changeWeek(true);
         }
     } else {
-        if (document.getElementsByClassName('before').length > 0) {
+        if (document.getElementsByClassName('before').length > 1) {
             const after = document.getElementsByClassName('after visible')[0];
             if (after) {
                 after.classList.remove('visible');
