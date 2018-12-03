@@ -27,16 +27,19 @@ class Scraper:
         return data
 
     def prettify(self, soup) -> list:
-        menuItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_="no-print")
+        try:
+            menuItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_="no-print")
 
-        menuItems = [i for i in menuItems]
+            menuItems = [i for i in menuItems]
 
-        menuItems = [self.extractText(i) for i in menuItems]
+            menuItems = [self.extractText(i) for i in menuItems]
 
-        headers = [i.replace('\n', '') for i in menuItems if i.startswith('\n')]
+            headers = [i.replace('\n', '') for i in menuItems if i.startswith('\n')]
 
-        for i in headers:
-            menuItems.remove(i)
+            for i in headers:
+                menuItems.remove(i)
+        except AttributeError:
+            menuItems = ['Information Not Found']
 
         return menuItems
 
