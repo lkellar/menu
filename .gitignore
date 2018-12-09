@@ -231,3 +231,4 @@ fabric.properties
 gen
 
 *.json
+*.sqlite3

@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-import os
+from os import path
 import json
 
 from menu.fetcher import Fetcher
@@ -14,11 +14,11 @@ errormsg = 'The requested menu data is not available now'
 @app.before_first_request
 def startup():
     global fetch
-    currentDir = os.path.dirname(os.path.realpath(__file__))
-    configPath = os.path.join(currentDir, '../config.json')
+    currentDir = path.dirname(path.realpath(__file__))
+    configPath = path.join(currentDir, '../config.json')
     with open(configPath, 'r') as f:
         config = json.load(f)
-    config['cache'] = config['cache'].replace('$HERE', os.path.join(currentDir, '..'))
+    config['cache'] = config['cache'].replace('$HERE', path.join(currentDir, '..'))
     fetch = Fetcher(config)
 
 @app.route('/')
