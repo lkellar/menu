@@ -114,13 +114,13 @@ function handleTouchMove(evt) {
     yDown = null;
 }
 
-function keyPress(oToCheckField, oKeyEvent) {
-        if (oKeyEvent.key === 'ArrowRight' || oKeyEvent.key === 'd') {
-            change(true)
-        } else if (oKeyEvent.key === 'ArrowLeft' || oKeyEvent.key === 'a') {
-            change(false)
-        }
+function keyDown(oToCheckField, oKeyEvent) {
+    if (oKeyEvent.key === 'ArrowRight' || oKeyEvent.key === 'd') {
+        change(true)
+    } else if (oKeyEvent.key === 'ArrowLeft' || oKeyEvent.key === 'a') {
+        change(false)
     }
+}
 
 let xDown = null;
 let yDown = null;

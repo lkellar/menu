@@ -17,13 +17,13 @@ To install, clone the project, and install the requirements
 Create a `config.json` in the project root directory that looks like the one below
 ```json
 {
-  "cache": "$HERE/cache.json",
+  "cache": "$HERE/cache.sqlite3",
   "school": "SCHOOL_NAME",
   "menu": "MENU_NAME"
 }
 ```
 A config needs to have
-* A cache file location, use `$HERE` to represent the directory where the config is in.
+* A cache file location, this will be an sqlite3 database. If no database is present, one will be created. Use `$HERE` to represent the directory where the config is in.
 * A school name, this is the `school_name` part of `https://myschooldining.com/school_name`
 * A menu name, on MySchoolDining, there are different menu types sometimes. Identify the id of the desired menu. Example: The ones at [The New School](https://myschooldining.com/thenewschool) at the time of this writing are Dining Room (diningroom), Summer Camps (summercamps), and Preschool (preschool)
 

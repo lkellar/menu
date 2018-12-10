@@ -28,7 +28,7 @@ def genHTML(data, urlRoot, date, entry=None):
         link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
 
     with doc:
-        with body(onkeypress="keyPress(this, event);"):
+        with body(onkeydown="keyDown(this, event);"):
             link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
             img(_class='arrow', id='left', onclick='change(false);', src='{}static/assets/left.svg'.format(urlRoot))
             img(_class='arrow', id='right', onclick='change(true);', src='{}static/assets/right.svg'.format(urlRoot))

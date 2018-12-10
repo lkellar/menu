@@ -11,7 +11,7 @@ class Scraper:
         self.month = nextMonth.month
         self.year = nextMonth.year
 
-    def go(self):
+    def go(self) -> dict:
         return self.parse(self.fetch(self.url))
 
     def fetch(self, url) -> str:
