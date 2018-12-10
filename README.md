@@ -12,6 +12,8 @@ It can also present data in pure JSON, for a whole week, for different dates, an
 
 To install, clone the project, and install the requirements
 
+This project requires Python3.6 or higher.
+
 `pip install -r requirements.txt`
 
 Create a `config.json` in the project root directory that looks like the one below
