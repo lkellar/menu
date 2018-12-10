@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from os import path
 import json
+import sqlite3
 
 from menu.fetcher import Fetcher
 from menu.util import genDate, getMonday
@@ -14,6 +15,7 @@ errormsg = 'The requested menu data is not available now'
 @app.before_first_request
 def startup():
     global fetch
+    global config
     currentDir = path.dirname(path.realpath(__file__))
     configPath = path.join(currentDir, '../config.json')
     with open(configPath, 'r') as f:
@@ -31,7 +33,11 @@ def index():
     if not entry:
         entry = None
     date = genDate(modifier)
-    data = fetch.week(getMonday(date))
+    with sqlite3.connect(config['cache']) as conn:
+        c = conn.cursor()
+        data = fetch.week(c, getMonday(date))
+        c.close()
+
     valid = {key: value for key, value in data.items() if value != errormsg}
     if len(valid) == 0:
         return app.send_static_file('error.html')
@@ -45,7 +51,11 @@ def week():
     if weeks:
         modifier = int(weeks) * 7
     date = genDate(modifier)
-    return jsonify(fetch.week(getMonday(date)))
+    with sqlite3.connect(config['cache']) as conn:
+        c = conn.cursor()
+        data = jsonify(fetch.week(c, getMonday(date)))
+        c.close()
+    return data
 
 
 @app.route('/api')
@@ -57,7 +67,13 @@ def api():
     if request.args.get('days'):
         modifier = int(request.args.get('days'))
     date = genDate(modifier)
-    return jsonify(fetch.prepAndGet(wordify, date))
+
+    with sqlite3.connect(config['cache']) as conn:
+        c = conn.cursor()
+        data = jsonify(fetch.prepAndGet(c, wordify, date))
+        c.close()
+
+    return data
 
 
 if __name__ == '__main__':
