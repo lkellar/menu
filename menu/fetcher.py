@@ -42,7 +42,7 @@ class Fetcher:
     def get(self, prettify: bool, start: str, end: str):
         menuData = self.fetchFromDatabase(start, end)
         if prettify:
-            wordifyData = [self.wordify(menuData, i['date']) for i in menuData]
+            wordifyData = [self.wordify(menuData[i], i) for i in menuData]
             if len(wordifyData) == 1:
                 wordifyData = wordifyData[0]
             return {"data": wordifyData}
@@ -99,6 +99,7 @@ class Fetcher:
             'INSERT OR REPLACE INTO menu VALUES (?,?)', menuItems)
         self.conn.commit()
 
-    def wordify(self, menuData, date):
+    def wordify(self, menuData: list, date: str):
+        date = datetime.strptime(date, '%Y-%m-%d')
         data = '\n'.join(menuData)
         return f'The menu for {date.strftime("%A, %B %d, %Y")}:\n{data}'

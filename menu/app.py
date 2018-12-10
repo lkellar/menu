@@ -57,7 +57,7 @@ def api():
     if request.args.get('days'):
         modifier = int(request.args.get('days'))
     date = genDate(modifier)
-    return jsonify(fetch.get(wordify, date))
+    return jsonify(fetch.prepAndGet(wordify, date))
 
 
 if __name__ == '__main__':
