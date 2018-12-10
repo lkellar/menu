@@ -11,7 +11,7 @@ function changeWeek(add) {
     window.location.href = url.toString();
 }
 
-function keyPress(oToCheckField, oKeyEvent) {
+function keyDown(oToCheckField, oKeyEvent) {
     if (oKeyEvent.key === 'ArrowRight' || oKeyEvent.key === 'd') {
         changeWeek(true)
     } else if (oKeyEvent.key === 'ArrowLeft' || oKeyEvent.key === 'a') {
