@@ -3,6 +3,7 @@ from menu.scraper import Scraper
 import json
 import sqlite3
 from sqlite3 import Cursor
+from dateutil import relativedelta
 
 class Fetcher:
     def __init__(self, config: dict):
@@ -58,14 +59,14 @@ class Fetcher:
             return self.get(c, prettify, startIso, endIso)
         elif end.month == currentMonth + 1 or end.month - currentMonth == 11:
             if self.validDate(c, startIso, endIso) > 0:
-                self.save(c, self.scrape(1))
+                self.scrape(1, c)
                 return self.get(startIso, endIso)
             else:
                 return self.genError(start, end)
         elif start.month is not currentMonth:
             return self.genError(start, end)
         else:
-            self.save(c, self.scrape(0))
+            self.scrape(0, c)
             if self.validDate(startIso, endIso) > 0:
                 return self.get(prettify, startIso, endIso)
             else:
@@ -78,23 +79,13 @@ class Fetcher:
                 'The requested menu data is not available now'
                 for i in date_list}
 
-    def scrape(self, months: int = 0):
-        return Scraper(self.school, self.menu, months).go()
+    def scrape(self, months: int = 0, c: Cursor = None):
+        nextMonth = datetime.today() + relativedelta(months=months)
+        yearMonth = nextMonth.strftime('%Y-%m')
+        return Scraper(self.school, self.menu, yearMonth, c).go()
 
     def resetCache(self, c: Cursor):
-        self.save(c, self.scrape())
-
-    def save(self, c: Cursor, data):
-        menuItems = []
-
-        for point in data:
-            menuItems.append((point, json.dumps(data[point])))
-
-        # if they already exist, there's a chance the menu has changed
-        # (which has happened before), so it will override
-        c.executemany(
-            'INSERT OR REPLACE INTO menu VALUES (?,?)', menuItems)
-        c.connection.commit()
+        self.scrape(0, c)
 
     def wordify(self, menuData: list, date: str):
         date = datetime.strptime(date, '%Y-%m-%d')

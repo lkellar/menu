@@ -1,22 +1,29 @@
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
+from sqlite3 import Cursor
+import json
+
 
 class Scraper:
-    def __init__(self, url: str, menu: str, months: int = 0):
+    # if cursor is provided, data is saved, if not, data is returned
+    def __init__(self, url: str, menu: str, yearMonth: str, c: Cursor = None):
         self.url = url
         self.menu = menu
-        nextMonth = datetime.today() + relativedelta(months=months)
-        self.month = nextMonth.month
-        self.year = nextMonth.year
+        self.c = c
+
+        # A yearMonth is a datetime formatted as .strftime('%Y-%m')
+        self.yearMonth = yearMonth
 
     def go(self) -> dict:
-        return self.parse(self.fetch(self.url))
+        data = self.parse(self.fetch(self.url))
+        if self.c:
+            self.save(self.c, data)
+        return data
 
     def fetch(self, url) -> str:
-        params = {'adj': 0, 'current_month': '{}-{}-01'.format(self.year, self.month)}
-        return requests.post('https://myschooldining.com/{}/calendarMonth'.format(url), params=params).text
+        params = {'adj': 0, 'current_month': f'{self.yearMonth}-01'}
+        return requests.post(f'https://myschooldining.com/{url}/calendarMonth', params=params).text
 
     def parse(self, html) -> dict:
         soup = BeautifulSoup(html, 'html.parser')
@@ -29,11 +36,8 @@ class Scraper:
     def prettify(self, soup) -> list:
         try:
             menuItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_="no-print")
-
             menuItems = [i for i in menuItems]
-
             menuItems = [self.extractText(i) for i in menuItems]
-
             headers = [i.replace('\n', '') for i in menuItems if i.startswith('\n')]
 
             for i in headers:
@@ -52,3 +56,14 @@ class Scraper:
     def strip(self, text):
         return text.replace("\xa0", "").replace("\n", "").strip()
 
+    def save(self, c: Cursor, data):
+        menuItems = []
+
+        for point in data:
+            menuItems.append((point, json.dumps(data[point])))
+
+        # if they already exist, there's a chance the menu has changed
+        # (which has happened before), so it will override
+        c.executemany(
+            'INSERT OR REPLACE INTO menu VALUES (?,?)', menuItems)
+        c.connection.commit()

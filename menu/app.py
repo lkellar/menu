@@ -12,6 +12,7 @@ fetch = None
 
 errormsg = 'The requested menu data is not available now'
 
+
 @app.before_first_request
 def startup():
     global fetch
@@ -22,6 +23,7 @@ def startup():
         config = json.load(f)
     config['cache'] = config['cache'].replace('$HERE', path.join(currentDir, '..'))
     fetch = Fetcher(config)
+
 
 @app.route('/')
 def index():
@@ -43,6 +45,7 @@ def index():
         return app.send_static_file('error.html')
     else:
         return genHTML(valid, request.url_root, date, entry)
+
 
 @app.route('/week')
 def week():
