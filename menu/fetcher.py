@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from menu.scraper import Scraper
+from menu.util import genNumber
 import json
 import sqlite3
 from sqlite3 import Cursor
+from dateutil import relativedelta
 
 class Fetcher:
     def __init__(self, config: dict):
@@ -19,11 +21,31 @@ class Fetcher:
         return self.prepAndGet(c, False, monday, friday)
 
     def fetchFromDatabase(self, c: Cursor, start: str, end: str) -> dict:
+        base = datetime.strptime(end, '%Y-%m-%d')
+        floor = datetime.strptime(start, '%Y-%m-%d')
+        diff = (base - floor).days
+        date_list = [(base - timedelta(days=x)).strftime('%Y-%m-%d') for x in
+                     range(0, diff+1)]
+        counts = self.chickenCount(date_list, c)
+
         query = "SELECT * from menu where date BETWEEN ? and ?"
         data = c.execute(query, (start, end)).fetchall()
 
         # Formatting the data from the database into a lovely dictionary
-        return {i[0]: json.loads(i[1]) for i in data}
+        return {i[0]: {'menu': json.loads(i[1]), 'chicken': {'count': counts[i[0]], 'positive': self.chickenPositive(i[1])}} for i in data}
+
+    def chickenPositive(self, data: str) -> bool:
+        if 'chicken' in data.lower():
+            return True
+        return False
+
+    def chickenCount(self, dates: list, c: Cursor) -> dict:
+        query = "SELECT COUNT(*) FROM menu WHERE data LIKE '%chicken%' AND date BETWEEN  '%' AND ?"
+        count = {}
+        for i in dates:
+            count[i] = c.execute(query, (i,)).fetchone()[0]
+
+        return count
 
     def validDate(self, c: Cursor, start: str, end: str = None)-> bool:
         if end:
@@ -58,14 +80,14 @@ class Fetcher:
             return self.get(c, prettify, startIso, endIso)
         elif end.month == currentMonth + 1 or end.month - currentMonth == 11:
             if self.validDate(c, startIso, endIso) > 0:
-                self.save(c, self.scrape(1))
+                self.scrape(1, c)
                 return self.get(startIso, endIso)
             else:
                 return self.genError(start, end)
         elif start.month is not currentMonth:
             return self.genError(start, end)
         else:
-            self.save(c, self.scrape(0))
+            self.scrape(0, c)
             if self.validDate(startIso, endIso) > 0:
                 return self.get(prettify, startIso, endIso)
             else:
@@ -78,25 +100,17 @@ class Fetcher:
                 'The requested menu data is not available now'
                 for i in date_list}
 
-    def scrape(self, months: int = 0):
-        return Scraper(self.school, self.menu, months).go()
+    def scrape(self, months: int = 0, c: Cursor = None):
+        nextMonth = datetime.today() + relativedelta(months=months)
+        yearMonth = nextMonth.strftime('%Y-%m')
+        return Scraper(self.school, self.menu, yearMonth, c).go()
 
     def resetCache(self, c: Cursor):
-        self.save(c, self.scrape())
+        self.scrape(0, c)
 
-    def save(self, c: Cursor, data):
-        menuItems = []
-
-        for point in data:
-            menuItems.append((point, json.dumps(data[point])))
-
-        # if they already exist, there's a chance the menu has changed
-        # (which has happened before), so it will override
-        c.executemany(
-            'INSERT OR REPLACE INTO menu VALUES (?,?)', menuItems)
-        c.connection.commit()
-
-    def wordify(self, menuData: list, date: str):
+    def wordify(self, menuData: dict, date: str):
         date = datetime.strptime(date, '%Y-%m-%d')
-        data = '\n'.join(menuData)
+        data = '\n'.join(menuData['menu'])
+        if menuData['chicken']['positive']:
+            data += f'\n\nThis is the {genNumber(menuData["chicken"]["count"])} time we\'ve had chicken this year.'
         return f'The menu for {date.strftime("%A, %B %d, %Y")}:\n{data}'

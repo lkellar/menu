@@ -3,6 +3,7 @@ from dominate.tags import *
 from dominate.util import raw
 from datetime import datetime, timedelta
 
+from menu.util import genNumber
 
 def genHTML(data, urlRoot, date, entry=None):
 
@@ -62,9 +63,13 @@ def genDay(day, data, date):
         h2(datetime.strptime(date, '%Y-%m-%d').strftime(
             '%A, %B %d, %Y'))
         with ul():
-            for z in data:
+            for z in data['menu']:
                 if z.startswith('\n'):
                     h3(z)
                 else:
                     li(z)
+            if data['chicken']['positive']:
+                h3('Chicken Count')
+                li(f'This is the {genNumber(data["chicken"]["count"])} time we\'ve had chicken this year.')
     return day
+
