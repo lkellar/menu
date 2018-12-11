@@ -51,3 +51,16 @@ def historicalScrape(cache: str, url: str, menu: str, start: str, end: str = Non
         c = conn.cursor()
         for i in months:
             Scraper(url, menu, i, c).go()
+
+
+def genNumber(num: int) -> str:
+    lastDigit = num % 10
+
+    if lastDigit == 1:
+        return f'{num}st'
+    elif lastDigit == 2:
+        return f'{num}nd'
+    elif lastDigit == 3:
+        return f'{num}rd'
+    else:
+        return f'{num}th'
