@@ -4,7 +4,7 @@ from menu.util import genNumber
 import json
 import sqlite3
 from sqlite3 import Cursor
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 
 class Fetcher:
     def __init__(self, config: dict):
