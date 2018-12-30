@@ -5,6 +5,7 @@ import json
 import sqlite3
 from sqlite3 import Cursor
 from dateutil.relativedelta import relativedelta
+from calendar import monthrange
 
 class Fetcher:
     def __init__(self, config: dict):
@@ -107,6 +108,10 @@ class Fetcher:
 
     def resetCache(self, c: Cursor):
         self.scrape(0, c)
+        today = datetime.today()
+        days = monthrange(today.year, today.month)[1]
+        if days - today.day < 8:
+            self.scrape(1, c)
 
     def wordify(self, menuData: dict, date: str):
         date = datetime.strptime(date, '%Y-%m-%d')
