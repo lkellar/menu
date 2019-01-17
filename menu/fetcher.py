@@ -33,7 +33,7 @@ class Fetcher:
         data = c.execute(query, (start, end)).fetchall()
 
         # Formatting the data from the database into a lovely dictionary
-        return {i[0]: {'data': json.loads(i[1]), 'chicken': {'count': counts[i[0]], 'positive': self.chickenPositive(i[1])}} for i in data}
+        return {i[0]: {'menu': json.loads(i[1]), 'chicken': {'count': counts[i[0]], 'positive': self.chickenPositive(i[1])}} for i in data}
 
     def chickenPositive(self, data: str) -> bool:
         if 'chicken' in data.lower():
