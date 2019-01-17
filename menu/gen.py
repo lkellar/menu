@@ -63,7 +63,7 @@ def genDay(day, data, date):
         h2(datetime.strptime(date, '%Y-%m-%d').strftime(
             '%A, %B %d, %Y'))
         with ul():
-            for z in data['menu']:
+            for z in data['data']:
                 if z.startswith('\n'):
                     h3(z)
                 else:
