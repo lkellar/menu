@@ -73,6 +73,8 @@ class Fetcher:
         if not end:
             end = start
 
+        print(start)
+
         currentMonth = datetime.today().month
         startIso = start.strftime('%Y-%m-%d')
         endIso = end.strftime('%Y-%m-%d')
@@ -89,7 +91,7 @@ class Fetcher:
             return self.genError(start, end)
         else:
             self.scrape(0, c)
-            if self.validDate(startIso, endIso) > 0:
+            if self.validDate(c, startIso, endIso) > 0:
                 return self.get(prettify, startIso, endIso)
             else:
                 return self.genError(start, end)

@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from os import path
 import json
 import sqlite3
+from datetime import datetime
 
 from menu.fetcher import Fetcher
 from menu.util import genDate, getMonday
@@ -64,12 +65,24 @@ def week():
 @app.route('/api')
 def api():
     wordify = False
-    modifier = 0
+    date = genDate()
     if request.args.get('wordify') == 'true':
         wordify = True
-    if request.args.get('days'):
-        modifier = int(request.args.get('days'))
-    date = genDate(modifier)
+    if request.args.get('date'):
+        arg = request.args.get('date')
+        try:
+            modifier = int(arg)
+            date = genDate(modifier)
+        except ValueError:
+            try:
+                # SET DATE AND HOUR PLEASE NOW
+                date = datetime.strptime(arg, '%Y-%m-%d')
+                date.hour = 0
+                date.minute = 0
+                date.second = 0
+                genDate(0, date)
+            except ValueError:
+                return jsonify(['Date argument is invalid!!']), 400
 
     with sqlite3.connect(config['cache']) as conn:
         c = conn.cursor()

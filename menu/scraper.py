@@ -42,7 +42,8 @@ class Scraper:
 
             for i in headers:
                 menuItems.remove(i)
-        except AttributeError:
+        except AttributeError as e:
+            print(e)
             menuItems = ['Information Not Found']
 
         return menuItems
