@@ -52,7 +52,7 @@ Users can also view data from the current month, and one month in advance.
 #### `/api`
 Returns menu for a specified date
 ##### Query Args
-* `days` (Number): How many days in the future to fetch
+* `date` (Number | String): How many days in the future to fetch OR a date in the format yyyy-mm-dd to fetch.
 * `wordify` (Boolean): Whether to make the text human readable (true), or JSON (false)
 
 #### `/week`

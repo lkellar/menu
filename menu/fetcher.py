@@ -82,21 +82,20 @@ class Fetcher:
         elif end.month == currentMonth + 1 or end.month - currentMonth == 11:
             if self.validDate(c, startIso, endIso) > 0:
                 self.scrape(1, c)
-                return self.get(startIso, endIso)
+                return self.get(c, prettify, startIso, endIso)
             else:
                 return self.genError(start, end)
         elif start.month is not currentMonth:
             return self.genError(start, end)
         else:
-            self.scrape(0, c)
-            if self.validDate(startIso, endIso) > 0:
-                return self.get(prettify, startIso, endIso)
-            else:
-                return self.genError(start, end)
+            return self.genError(start, end)
 
     def genError(self, start: datetime, end: datetime) -> dict:
-        date_list = [end - timedelta(days=x) for x in
-                     range(0, (end - start).days)]
+        if end == start:
+            date_list = [start]
+        else:
+            date_list = [end - timedelta(days=x) for x in
+                         range(0, (end - start).days)]
         return {i.strftime('%Y-%m-%d'):
                 'The requested menu data is not available now'
                 for i in date_list}
