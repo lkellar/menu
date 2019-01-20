@@ -75,12 +75,7 @@ def api():
             date = genDate(modifier)
         except ValueError:
             try:
-                # SET DATE AND HOUR PLEASE NOW
                 date = datetime.strptime(arg, '%Y-%m-%d')
-                date.hour = 0
-                date.minute = 0
-                date.second = 0
-                genDate(0, date)
             except ValueError:
                 return jsonify(['Date argument is invalid!!']), 400
 
