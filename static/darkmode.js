@@ -3,6 +3,9 @@ function setCookie(name, value) {
 }
 
 function topLevelDomain() {
+    if (document.domain === '0.0.0.0') {
+        return document.domain;
+    }
     return document.domain.split('.').slice(-2).join('.');
 }
 
