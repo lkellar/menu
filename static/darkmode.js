@@ -3,9 +3,7 @@ function setCookie(name, value) {
 }
 
 function topLevelDomain() {
-    const parts = location.hostname.split('.');
-    parts.shift();
-    return parts.join('.');
+    return document.domain.split('.').slice(-2).join('.');
 }
 
 function getCookie(c_name) {
