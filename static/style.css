@@ -86,3 +86,13 @@ footer {
         font-size: 200%;
     }
 }
+
+/* Darkmode stuff */
+
+.darkmode, .darkmode .hidden {
+    background-color: #515151;
+}
+
+.darkmode .day, .darkmode footer {
+    background-color: #d3d3d3;
+}

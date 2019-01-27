@@ -53,8 +53,9 @@ def genHTML(data, urlRoot, date, entry=None):
                 div(_class='day after hidden')
             footer(raw(
                 '<p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>. <a href="https://fontawesome.com/license/free">License</a>. No changes to images were made.' +
-                '<br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a>'))
-            script(type='text/javascript', src='{}static/main.js'.format(urlRoot))
+                '<br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a> <button onclick=\'toggle()\'>Toggle Dark Mode</button>'))
+            script(type='text/javascript', src=f'{urlRoot}static/main.js')
+            script(type='text/javascript', src=f'{urlRoot}static/darkmode.js')
     return doc.render()
 
 
