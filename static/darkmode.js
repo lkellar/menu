@@ -1,5 +1,11 @@
 function setCookie(name, value) {
-    document.cookie = name + '=' + value  + '; path=/';
+    document.cookie = name + '=' + value  + `; path=/; domain=${topLevelDomain()}`;
+}
+
+function topLevelDomain() {
+    const parts = location.hostname.split('.');
+    parts.shift();
+    return parts.join('.');
 }
 
 function getCookie(c_name) {
