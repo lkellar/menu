@@ -89,10 +89,10 @@ footer {
 
 /* Darkmode stuff */
 
-.darkmode, .darkmode .hidden {
-    background-color: #515151;
-}
-
 .darkmode .day, .darkmode footer {
     background-color: #d3d3d3;
+}
+
+.darkmode, .darkmode .hidden {
+    background-color: #515151;
 }

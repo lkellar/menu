@@ -79,7 +79,6 @@ function changeWeek(add) {
     } else {
         url.searchParams.set('entry', 'last')
     }
-    console.log(url);
     window.location.href = url.toString();
 
 }
