@@ -1,5 +1,11 @@
 function setCookie(name, value) {
-    document.cookie = name + '=' + value  + `; path=/; domain=${topLevelDomain()}`;
+    document.cookie = name + '=' + value  + `; path=/; domain=${topLevelDomain()}; expires=${tenYears()}`;
+}
+
+function tenYears() {
+    const CookieDate = new Date;
+    CookieDate.setFullYear(CookieDate.getFullYear() +10);
+    return CookieDate.toUTCString();
 }
 
 function topLevelDomain() {
