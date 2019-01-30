@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from sqlite3 import Cursor
 import json
+from re import compile
 
 
 class Scraper:
@@ -35,20 +36,26 @@ class Scraper:
 
     def prettify(self, soup) -> list:
         try:
-            menuItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_="no-print")
-            menuItems = [i for i in menuItems]
-            menuItems = [self.extractText(i) for i in menuItems]
-            headers = [i.replace('\n', '') for i in menuItems if i.startswith('\n')]
+            rawItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_=compile('month-(item|category|period)'))
+            rawItems = [i for i in rawItems]
 
-            for i in headers:
-                menuItems.remove(i)
+            last = None
+            menuItems = []
+            for i in rawItems:
+                extractedText = self.extractText(i)
+                if extractedText != last:
+                    menuItems.append(extractedText)
+
+                last = extractedText
+
         except AttributeError:
             menuItems = ['Information Not Found']
+
 
         return menuItems
 
     def extractText(self, ele) -> str:
-        if 'month-category' in ele['class']:
+        if 'month-category' in ele['class'] or 'month-period' in ele['class']:
             return '\n' + self.strip(ele.text)
         else:
             return self.strip(ele.text)
