@@ -30,7 +30,6 @@ def genHTML(data, urlRoot, date, entry=None):
 
     with doc:
         with body(onkeydown="keyDown(this, event);"):
-            link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
             img(_class='arrow', id='left', onclick='change(false);', src='{}static/assets/left.svg'.format(urlRoot))
             img(_class='arrow', id='right', onclick='change(true);', src='{}static/assets/right.svg'.format(urlRoot))
             with div(id='main'):
