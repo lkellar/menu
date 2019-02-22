@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu</title>
+    <link rel="stylesheet" href="{{ url_for('static', 'style.css') }}">
+</head>
+{% macro genDay(_class, data, date) %}
+    <h2>date</h2>
+    <ul>
+        {% for i in data.menu %}
+            {% if i.startswith('\n') %}
+                <h3>{{ i }}</h3>
+            {% else %}
+                <li>{{ i }}</li>
+            {% endif %}
+        {% endfor %}
+        {% if data.chicken.positive %}
+            <h3>Chicken Count</h3>
+            <li>This is the {{ data.chicken.count|genNumber }} time we've had chicken this year.</li>
+        {% endif %}
+    </ul>
+{%- endmacro %}
+<body onkeydown="keyDown(this, event);">
+<img class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', 'assets/left.svg') }}">
+<img class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', 'assets/right.svg') }}">
+
+
+</body>
+</html>
