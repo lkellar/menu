@@ -26,6 +26,7 @@ def genHTML(data, urlRoot, date, entry=None):
     doc = dominate.document('Menu')
 
     with doc.head:
+        meta(charset='UTF-8')
         link(rel='stylesheet', href='{}static/style.css'.format(urlRoot), type='text/css')
 
     with doc:
