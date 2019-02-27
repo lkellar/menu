@@ -1,14 +1,14 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from os import path
 import json
 import sqlite3
 from datetime import datetime
 
 from menu.fetcher import Fetcher
-from menu.util import genDate, getMonday
-from menu.gen import genHTML
+from menu.util import genDate, getMonday, genNumber, genDateClasses
 
-app = Flask(__name__, static_url_path='/static', static_folder='../static/')
+app = Flask(__name__, static_url_path='/static', static_folder='../static/',
+            template_folder='../templates')
 fetch = None
 
 errormsg = 'The requested menu data is not available now'
@@ -42,10 +42,19 @@ def index():
         c.close()
 
     valid = {key: value for key, value in data.items() if value != errormsg}
+    dateClasses = genDateClasses(valid, date, entry)
+    print(dateClasses)
+    for i in dateClasses['before']:
+        print(dateClasses['before'][i])
+        print(dateClasses['before'][i]['menu'])
+        print(type(dateClasses['before'][i]['menu']))
+        for x in dateClasses['before'][i]['menu']:
+            print(x)
     if len(valid) == 0:
         return app.send_static_file('error.html')
     else:
-        return genHTML(valid, request.url_root, date, entry)
+        return render_template('index.html', data=dateClasses, genNumber=genNumber,
+                               datetime=datetime)
 
 
 @app.route('/week')

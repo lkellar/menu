@@ -3,28 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <title>Menu</title>
-    <link rel="stylesheet" href="{{ url_for('static', 'style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
 </head>
-{% macro genDay(_class, data, date) %}
-    <h2>date</h2>
-    <ul>
-        {% for i in data.menu %}
-            {% if i.startswith('\n') %}
-                <h3>{{ i }}</h3>
-            {% else %}
-                <li>{{ i }}</li>
+{% macro genDay(_class, data, date, id=None) %}
+    <div class="{{ _class }}" id="{{ id if id }}">
+        <h2>{{ datetime.strptime(date, '%Y-%m-%d').strftime(
+            '%A, %B %d, %Y') }}</h2>
+        <ul>
+            {% for i in data.menu %}
+                {% if i.startswith('\n') %}
+                    <h3>{{ i }}</h3>
+                {% else %}
+                    <li>{{ i }}</li>
+                {% endif %}
+            {% endfor %}
+            {% if data.chicken.positive %}
+                <h3>Chicken Count</h3>
+                <li>This is the {{ genNumber(data.chicken.count) }} time we've had chicken this year.</li>
             {% endif %}
-        {% endfor %}
-        {% if data.chicken.positive %}
-            <h3>Chicken Count</h3>
-            <li>This is the {{ data.chicken.count|genNumber }} time we've had chicken this year.</li>
-        {% endif %}
-    </ul>
+        </ul>
+    </div>
 {%- endmacro %}
 <body onkeydown="keyDown(this, event);">
-<img class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', 'assets/left.svg') }}">
-<img class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', 'assets/right.svg') }}">
-
+<img alt="Left Arrow" class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', filename='assets/left.svg') }}">
+<img alt="Right Arrow" class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', filename='assets/right.svg') }}">
+<div id="main">
+    <div class="day before hidden"></div>
+    <div class="day before">
+        <h3>Go left to see previous weeks</h3>
+    </div>
+    {% for i in data['before'] %}
+        {{ genDay('day before', data['before'][i], i) }}
+    {% endfor %}
+    {% for i in data['current'] %}
+        {{ genDay('day', data['current'][i], i, id='current') }}
+    {% endfor %}
+    {% for i in data['after'] %}
+        {{ genDay('day after', data['after'][i], i) }}
+    {% endfor %}
+    <div class="day after">
+        <h3>Go right to see future weeks</h3>
+    </div>
+    <div class="day after hidden"></div>
+</div>
+<footer>
+    <p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>. <a href="https://fontawesome.com/license/free">License</a>. No changes to images were made. <br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a> <button onclick='toggle()'>Toggle Dark Mode</button></p>
+</footer>
+<script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='darkmode.js')}}"></script>
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 import sqlite3
 from menu.scraper import Scraper
+from collections import OrderedDict
 
 
 def genDate(modifier: int = 0, date: datetime = datetime.now()) -> datetime:
@@ -10,6 +11,34 @@ def genDate(modifier: int = 0, date: datetime = datetime.now()) -> datetime:
     if date.weekday() > 4:
         date += timedelta(days=(7-date.weekday()))
     return date
+
+
+def genDateClasses(data: dict, date: datetime, entry: str) -> dict:
+    keys = sorted(data.keys())
+    menus = OrderedDict({i: data[i] for i in keys})
+
+    if date.strftime('%Y-%m-%d') not in keys:
+        for i in range(0, 5):
+            date += timedelta(days=1)
+            if date.strftime('%Y-%m-%d') in keys:
+                break
+
+    if entry == 'first':
+        before, current, after = [], menus[0], menus[1:]
+    elif entry == 'last':
+        before, current, after = menus[:-1], menus[-1], []
+    else:
+        today = date.strftime('%Y-%m-%d')
+        before, current, after = {}, {}, {}
+        for i in menus:
+            if i < today:
+                before[i] = menus[i]
+            elif i == today:
+                current[i] = menus[i]
+            elif i > today:
+                after[i] = menus[i]
+
+    return {'before': before, 'current': current, 'after': after}
 
 
 def getMonday(date: datetime = datetime.today()) -> datetime:
