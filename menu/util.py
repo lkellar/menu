@@ -24,9 +24,14 @@ def genDateClasses(data: dict, date: datetime, entry: str) -> dict:
                 break
 
     if entry == 'first':
-        before, current, after = [], menus[0], menus[1:]
+        first = next(iter(menus))
+        current = {first: menus[first]}
+        menus.pop(first)
+        before, after = [], menus
     elif entry == 'last':
-        before, current, after = menus[:-1], menus[-1], []
+        last = menus.popitem()
+        current = {last[0]: last[1]}
+        before, after = menus, []
     else:
         today = date.strftime('%Y-%m-%d')
         before, current, after = {}, {}, {}
