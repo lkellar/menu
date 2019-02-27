@@ -43,13 +43,6 @@ def index():
 
     valid = {key: value for key, value in data.items() if value != errormsg}
     dateClasses = genDateClasses(valid, date, entry)
-    print(dateClasses)
-    for i in dateClasses['before']:
-        print(dateClasses['before'][i])
-        print(dateClasses['before'][i]['menu'])
-        print(type(dateClasses['before'][i]['menu']))
-        for x in dateClasses['before'][i]['menu']:
-            print(x)
     if len(valid) == 0:
         return app.send_static_file('error.html')
     else:
