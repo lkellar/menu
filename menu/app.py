@@ -43,10 +43,10 @@ def index():
         c.close()
 
     valid = {key: value for key, value in data.items() if value != errormsg}
-    dateClasses = genDateClasses(valid, date, entry)
     if len(valid) == 0:
         return app.send_static_file('error.html')
     else:
+        dateClasses = genDateClasses(valid, date, entry)
         return render_template('index.html', data=dateClasses, genNumber=genNumber,
                                datetime=datetime)
 
