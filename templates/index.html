@@ -12,7 +12,7 @@
         <ul>
             {% for i in data.menu %}
                 {% if i.startswith('\n') %}
-                    <h3>{{ i }}</h3>
+                    <h3>{{ i.replace('\n','') }}</h3>
                 {% else %}
                     <li>{{ i }}</li>
                 {% endif %}

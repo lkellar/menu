@@ -9,6 +9,7 @@ from menu.util import genDate, getMonday, genNumber, genDateClasses
 
 app = Flask(__name__, static_url_path='/static', static_folder='../static/',
             template_folder='../templates')
+app.jinja_options = {'lstrip_blocks':True, 'trim_blocks':True}
 fetch = None
 
 errormsg = 'The requested menu data is not available now'
