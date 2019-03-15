@@ -7,7 +7,7 @@
 <body style="background-color: #c4c4c4" onkeydown="keyDown(this, event);">
 <main>
     <h3 style="text-align: center">Sorry! The requested menu data is not available.</h3>
-    <script src="http://127.0.0.1:5000/static/error.js" type="text/javascript"></script>
+    <script src="{{ url_for('static', filename='error.js')}}" type="text/javascript"></script>
 </main>
 </body>
 </html>
