@@ -9,7 +9,7 @@ from menu.util import genDate, getMonday, genNumber, genDateClasses
 
 app = Flask(__name__, static_url_path='/static', static_folder='../static/',
             template_folder='../templates')
-app.jinja_options = {'lstrip_blocks':True, 'trim_blocks':True}
+app.jinja_options = {'lstrip_blocks': True, 'trim_blocks': True}
 fetch = None
 
 errormsg = 'The requested menu data is not available now'
@@ -43,10 +43,10 @@ def index():
         c.close()
 
     valid = {key: value for key, value in data.items() if value != errormsg}
-    dateClasses = genDateClasses(valid, date, entry)
     if len(valid) == 0:
-        return app.send_static_file('error.html')
+        return render_template('error.html')
     else:
+        dateClasses = genDateClasses(valid, date, entry)
         return render_template('index.html', data=dateClasses, genNumber=genNumber,
                                datetime=datetime)
 
