@@ -4,7 +4,9 @@ from menu.scraper import Scraper
 from collections import OrderedDict
 
 
-def genDate(modifier: int = 0, date: datetime = datetime.now()) -> datetime:
+def genDate(modifier: int = 0, date: datetime = None) -> datetime:
+    if not date:
+        date = datetime.now()
     date += timedelta(days=modifier)
     if date.hour > 12:
         date += timedelta(days=1)
