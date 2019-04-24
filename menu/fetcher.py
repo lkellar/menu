@@ -18,17 +18,23 @@ class Fetcher:
                                                  (date text PRIMARY KEY UNIQUE, data text)''')
 
     def week(self, c: Cursor, monday: datetime):
+        # Input: The monday of a week
+        # Returns menu data for the whole school week
         friday = monday + timedelta(days=4)
         return self.prepAndGet(c, False, monday, friday)
 
     def fetchFromDatabase(self, c: Cursor, start: str, end: str) -> dict:
+        # Getting a list of all dates between start and end
         base = datetime.strptime(end, '%Y-%m-%d')
         floor = datetime.strptime(start, '%Y-%m-%d')
         diff = (base - floor).days
         date_list = [(base - timedelta(days=x)).strftime('%Y-%m-%d') for x in
                      range(0, diff+1)]
+
+        # Getting chicken count for each date
         counts = self.chickenCount(date_list, c)
 
+        # Getting all menu data required from Database
         query = "SELECT * from menu where date BETWEEN ? and ?"
         data = c.execute(query, (start, end)).fetchall()
 
@@ -41,6 +47,7 @@ class Fetcher:
         return False
 
     def chickenCount(self, dates: list, c: Cursor) -> dict:
+        # Takes dates as input and checks how many times chicken has been served for date
         query = "SELECT COUNT(*) FROM menu WHERE data LIKE '%chicken%' AND date BETWEEN  '%' AND ?"
         count = {}
         for i in dates:
@@ -48,7 +55,8 @@ class Fetcher:
 
         return count
 
-    def validDate(self, c: Cursor, start: str, end: str = None)-> bool:
+    def validDate(self, c: Cursor, start: str, end: str = None) -> bool:
+        # Checks if the date provided is actually in the database
         if end:
             query = "SELECT COUNT(*) from menu where date BETWEEN ? and ?"
             result = c.execute(query, (start, end)).fetchone()
@@ -60,6 +68,7 @@ class Fetcher:
         return False
 
     def get(self, c: Cursor, prettify: bool, start: str, end: str):
+        # Takes start and end dates, and fetches from the data base
         menuData = self.fetchFromDatabase(c, start, end)
         if prettify:
             wordifyData = [self.wordify(menuData[i], i) for i in menuData]
@@ -69,6 +78,7 @@ class Fetcher:
         return menuData
 
     def prepAndGet(self, c: Cursor, prettify: bool, start: datetime, end: datetime = None) -> dict:
+        # This function is kind of the screener function, and if the parameters passed are valid, they move on
         # if only start date is passed, set end as start date
         if not end:
             end = start
@@ -77,20 +87,28 @@ class Fetcher:
         startIso = start.strftime('%Y-%m-%d')
         endIso = end.strftime('%Y-%m-%d')
 
+        # if valid date, get data from database and return it
         if self.validDate(c, startIso, endIso) > 0:
             return self.get(c, prettify, startIso, endIso)
+
+        # if not valid date, but the date provided is in the next date,
+        # scrape the data for next month
         elif end.month == currentMonth + 1 or end.month - currentMonth == 11:
             if self.validDate(c, startIso, endIso) > 0:
                 self.scrape(1, c)
                 return self.get(c, prettify, startIso, endIso)
             else:
                 return self.genError(start, end)
+
+        # If the starting month isn't the current month (or next month), throw an error
         elif start.month is not currentMonth:
             return self.genError(start, end)
+        # throw an error
         else:
             return self.genError(start, end)
 
     def genError(self, start: datetime, end: datetime) -> dict:
+        # An error message that works with the site and the API
         if end == start:
             date_list = [start]
         else:
@@ -101,11 +119,14 @@ class Fetcher:
                 for i in date_list}
 
     def scrape(self, months: int = 0, c: Cursor = None):
+        # preps the scraper and scrapes, passes a cursor so data is saves
         nextMonth = datetime.today() + relativedelta(months=months)
         yearMonth = nextMonth.strftime('%Y-%m')
         return Scraper(self.school, self.menu, yearMonth, c).go()
 
     def resetCache(self, c: Cursor):
+        # Overwrites cache to update menu listings
+        # Used by the resetCache function in the __init__.py
         self.scrape(0, c)
         today = datetime.today()
         days = monthrange(today.year, today.month)[1]
@@ -113,6 +134,8 @@ class Fetcher:
             self.scrape(1, c)
 
     def wordify(self, menuData: dict, date: str):
+        # Takes JSON and formats it for the Siri Shortcut, or any other
+        # user presentable text
         date = datetime.strptime(date, '%Y-%m-%d')
         data = '\n'.join(menuData['menu'])
         if menuData['chicken']['positive']:

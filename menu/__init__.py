@@ -4,6 +4,8 @@ from menu.fetcher import Fetcher
 import sqlite3
 
 def resetCache():
+    # Can be used by a server admin to reset the cache
+    # I personally have a cron run this function every morning at 9am ish
     currentDir = os.path.dirname(os.path.realpath(__file__))
     configPath = os.path.join(currentDir, '../config.json')
     with open(configPath, 'r') as f:

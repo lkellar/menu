@@ -11,6 +11,7 @@ class Scraper:
     def __init__(self, url: str, menu: str, yearMonth: str, c: Cursor = None):
         self.url = url
         self.menu = menu
+        # SQLite Cursor
         self.c = c
 
         # A yearMonth is a datetime formatted as .strftime('%Y-%m')
@@ -18,11 +19,13 @@ class Scraper:
 
     def go(self) -> dict:
         data = self.parse(self.fetch(self.url))
+        # If there is a cursor, save data into the database
         if self.c:
             self.save(self.c, data)
         return data
 
     def fetch(self, url) -> str:
+        # Setting params up to get current month
         params = {'adj': 0, 'current_month': f'{self.yearMonth}-01'}
         return requests.post(f'https://myschooldining.com/{url}/calendarMonth', params=params).text
 
@@ -50,7 +53,6 @@ class Scraper:
 
         except AttributeError:
             menuItems = ['Information Not Found']
-
 
         return menuItems
 
