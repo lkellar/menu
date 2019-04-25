@@ -1,6 +1,8 @@
 from menu.app import app
 import os, json
 from menu.fetcher import Fetcher
+from menu.util import monthlist_fast
+from menu.scraper import Scraper
 import sqlite3
 
 def resetCache():
@@ -16,3 +18,15 @@ def resetCache():
         c = conn.cursor()
         fetch.resetCache(c)
         c.close()
+
+def historicalScrape(cache: str, url: str, menu: str, start: str,
+                     end: str = None):
+    if not end:
+        end = start
+
+    months = monthlist_fast((start, end))
+
+    with sqlite3.connect(cache) as conn:
+        c = conn.cursor()
+        for i in months:
+            Scraper(url, menu, i, None, c).go()

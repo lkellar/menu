@@ -14,7 +14,6 @@ fetch = None
 
 errormsg = 'The requested menu data is not available now'
 
-
 @app.before_first_request
 def startup():
     global fetch
@@ -92,3 +91,4 @@ def api():
 
 if __name__ == '__main__':
     app.run()
+    startup()

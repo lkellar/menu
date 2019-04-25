@@ -11,6 +11,7 @@ class Fetcher:
     def __init__(self, config: dict):
         self.school = config['school']
         self.menu = config['menu']
+        self.config = config
 
         with sqlite3.connect(config['cache']) as conn:
             c = conn.cursor()
@@ -118,11 +119,14 @@ class Fetcher:
                 'The requested menu data is not available now'
                 for i in date_list}
 
-    def scrape(self, months: int = 0, c: Cursor = None):
+    def scrape(self, months: int = 0, c: Cursor = None, email: bool = True):
+        # The email variable will email the administrator about missing menus if true
+
         # preps the scraper and scrapes, passes a cursor so data is saves
         nextMonth = datetime.today() + relativedelta(months=months)
         yearMonth = nextMonth.strftime('%Y-%m')
-        return Scraper(self.school, self.menu, yearMonth, c).go()
+        # Scrapes data and puts in the email configuration data if it exists
+        return Scraper(self.school, self.menu, yearMonth, self.config['email'] if 'email' in self.config and email else None, c).go()
 
     def resetCache(self, c: Cursor):
         # Overwrites cache to update menu listings
@@ -131,7 +135,9 @@ class Fetcher:
         today = datetime.today()
         days = monthrange(today.year, today.month)[1]
         if days - today.day < 8:
-            self.scrape(1, c)
+            # We set email to false, because if menus are missing, the admin wouldn've
+            # been alerted during the previous scrape
+            self.scrape(1, c, email=False)
 
     def wordify(self, menuData: dict, date: str):
         # Takes JSON and formats it for the Siri Shortcut, or any other

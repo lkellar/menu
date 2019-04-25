@@ -3,16 +3,21 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 from sqlite3 import Cursor
 import json
-from re import compile
+import re
+import threading
+
+from menu.util import emailAdmin
 
 
 class Scraper:
     # if cursor is provided, data is saved, if not, data is returned
-    def __init__(self, url: str, menu: str, yearMonth: str, c: Cursor = None):
+    def __init__(self, url: str, menu: str, yearMonth: str, emailConfig: dict = None, c: Cursor = None):
         self.url = url
         self.menu = menu
         # SQLite Cursor
         self.c = c
+
+        self.emailConfig = emailConfig
 
         # A yearMonth is a datetime formatted as .strftime('%Y-%m')
         self.yearMonth = yearMonth
@@ -31,15 +36,29 @@ class Scraper:
 
     def parse(self, html) -> dict:
         soup = BeautifulSoup(html, 'html.parser')
+        titles = self.fetchMenuTitles(soup)
+
+        # If the chosen menu is not available AND email prefs were set,
+        # start a separate thread to email the administrator
+        if self.menu not in titles and self.emailConfig:
+            t = threading.Thread(target=emailAdmin,
+                                 args=(self.emailConfig, titles, self.menu))
+            t.start()
+
         data = {}
         for i in [i for i in soup.find_all(class_="weekday") if i['class'] in [['weekday', 'month'], ['month', 'weekday']] and len(i['id']) > 4]:
             formattedDate = datetime.strptime(i['this_date'],'%m/%d/%y').strftime('%Y-%m-%d')
-            data[formattedDate] = self.prettify(i)
+
+            if self.menu in titles:
+                data[formattedDate] = self.prettify(i)
+            else:
+                # If the menu doesn't exist, the information we're looking for doesn't exist
+                data[formattedDate] = ['Information Not Found']
         return data
 
     def prettify(self, soup) -> list:
         try:
-            rawItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_=compile('month-(item|category|period)'))
+            rawItems = soup.find(class_="menu-{}".format(self.menu)).findAll("span", class_=re.compile('month-(item|category|period)'))
             rawItems = [i for i in rawItems]
 
             last = None
@@ -55,6 +74,16 @@ class Scraper:
             menuItems = ['Information Not Found']
 
         return menuItems
+
+    def fetchMenuTitles(self, soup) -> list:
+        # taking the html from the site and getting all the available menus
+        # in case the user selected one is unavailable
+        titles = []
+        r = re.compile('menu-([^location].*)')
+        for i in soup.find('div', class_="content").find_all("div", class_="menu-location"):
+            titles.append(next(filter(r.match, i['class'])).replace('menu-', ''))
+
+        return titles
 
     def extractText(self, ele) -> str:
         if 'month-category' in ele['class'] or 'month-period' in ele['class']:
@@ -76,3 +105,4 @@ class Scraper:
         c.executemany(
             'INSERT OR REPLACE INTO menu VALUES (?,?)', menuItems)
         c.connection.commit()
+

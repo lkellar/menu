@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
-import sqlite3
-from menu.scraper import Scraper
 from collections import OrderedDict
-
+from smtplib import SMTP_SSL
+from email.mime.text import MIMEText
 
 def genDate(modifier: int = 0, date: datetime = None) -> datetime:
     if not date:
@@ -77,17 +76,6 @@ def monthlist_fast(dates):
     return mlist
 
 
-def historicalScrape(cache: str, url: str, menu: str, start: str, end: str = None):
-    if not end:
-        end = start
-
-    months = monthlist_fast((start, end))
-
-    with sqlite3.connect(cache) as conn:
-        c = conn.cursor()
-        for i in months:
-            Scraper(url, menu, i, c).go()
-
 
 def genNumber(num: int) -> str:
     lastDigit = num % 10
@@ -100,3 +88,17 @@ def genNumber(num: int) -> str:
         return f'{num}rd'
     else:
         return f'{num}th'
+
+
+def emailAdmin(config: dict, titles: list, menuChoice: str):
+    # Sends an email to an admin alerting them that their selected menu doesn't exist
+    formattedTitles = '\n'.join(titles)
+    msg = MIMEText(f'Selected menu "{menuChoice}" is unavailable. Available menus are:\n{formattedTitles}')
+
+    msg['Subject'] = 'Menu Choice is unavailable!🔥'
+    msg['To'] = config['to']
+    msg['From'] = config['from']
+
+    with SMTP_SSL(config['server'], port=config['port']) as s:
+        s.login(config['username'], config['password'])
+        s.send_message(msg, from_addr=config['from'], to_addrs=config['to'])
