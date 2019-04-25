@@ -64,3 +64,35 @@ Returns menu for current week in JSON
 Want to ask Siri for the menu? (iOS 12 only)
 
 Download the Shortcut [here](https://www.icloud.com/shortcuts/7a5784c83c444a80b69bb04efc16a89d)
+
+## Email
+If your school has a tendency to change the menu ID unexpectedly, you can input email credentials to be notified of menu ID changes.
+
+First, put some SMTP email credentials in your config, like the example below
+
+```json
+{
+  "cache": "$HERE/menu.sqlite3",
+  "school": "thenewschool",
+  "menu": "upperschool",
+  "email": {
+    "server": "smtp.fastmail.com",
+    "port": 465,
+    "username": "lucas@lkellar.org",
+    "password": "examplePassword",
+    "to": "lucas@lkellar.org",
+    "from": "server@lkellar.org"
+  }
+}
+```
+
+I would **STRONGLY** reccommend using an App-Specific Password for your email account. Some instructions on getting App-Specific passwords for common providers is listed below
+
+*  [Apple/iCloud](https://support.apple.com/en-us/HT204397)
+*  [Outlook/Hotmail/Any Microsoft](https://support.microsoft.com/en-us/help/12409/microsoft-account-app-passwords-and-two-step-verification)
+*  [Gmail/Google](https://support.google.com/accounts/answer/185833?hl=en)
+*  [FastMail](https://www.fastmail.com/help/clients/apppassword.html)
+
+Once you've got your email information in the config, the application will automatically send emails to the provided address whenever the chosen menu can not be found.
+
+![image of email](screenshots/email.png)
