@@ -79,11 +79,12 @@ footer {
     #current {
         width: 90vw;
         margin: 0 5vw;
-        padding: 0;
-        font-size: 200%;
+        padding: 1%;
     }
-    #current > h2 {
-        font-size: 200%;
+
+    footer {
+        width: 80vw;
+        margin: 0 auto;
     }
 }
 

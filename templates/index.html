@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Menu</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 {% macro genDay(_class, data, date, id=None) %}
     <div class="{{ _class }}" id="{{ id if id }}">
