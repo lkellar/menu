@@ -90,10 +90,36 @@ footer {
 
 /* Darkmode stuff */
 
-.darkmode .day, .darkmode footer {
+.darkmode .day, .darkmode footer, nav {
     background-color: #d3d3d3;
 }
 
 .darkmode, .darkmode .hidden {
     background-color: #515151;
+}
+
+nav {
+    padding: 1em;
+    border-radius: 50px;
+    width: 60%;
+    margin: 0 auto 2em;
+}
+
+nav ol {
+    list-style-type: none;
+    padding-left: 0;
+    margin: auto;
+}
+
+nav li {
+    display: inline-block;
+}
+
+nav a::after {
+    display: inline-block;
+    color: #000;
+    content: '>';
+    font-size: 80%;
+    font-weight: bold;
+    padding: 0 3px;
 }

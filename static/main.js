@@ -121,6 +121,11 @@ function keyDown(oToCheckField, oKeyEvent) {
     }
 }
 
+const navBar = document.getElementsByTagName('nav')[0];
+if (navBar.getElementsByTagName('li').length === 1) {
+    navBar.style.display = 'none';
+}
+
 let xDown = null;
 let yDown = null;
 init();

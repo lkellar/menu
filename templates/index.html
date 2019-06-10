@@ -26,6 +26,15 @@
     </div>
 {%- endmacro %}
 <body onkeydown="keyDown(this, event);">
+<nav>
+{# A dynamic navigation bar #}
+    <ol>
+        {% if url_for('index') != '/' %}
+            <li><a href="/">Home</a></li>
+        {% endif %}
+        <li>{{ Menu }}</li>
+    </ol>
+</nav>
 <img alt="Left Arrow" class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', filename='assets/left.svg') }}">
 <img alt="Right Arrow" class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', filename='assets/right.svg') }}">
 <div id="main">
@@ -52,6 +61,5 @@
 </footer>
 <script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='darkmode.js')}}"></script>
-
 </body>
 </html>
