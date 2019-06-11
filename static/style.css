@@ -90,12 +90,15 @@ footer {
 
 /* Darkmode stuff */
 
-.darkmode .day, .darkmode footer, nav {
-    background-color: #d3d3d3;
-}
+@media (prefers-color-scheme: dark) {
+    .day, footer, nav {
+        background-color: #d3d3d3;
+    }
 
-.darkmode, .darkmode .hidden {
-    background-color: #515151;
+    body, .hidden {
+        background-color: #515151;
+    }
+
 }
 
 nav {
