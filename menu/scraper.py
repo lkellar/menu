@@ -47,7 +47,7 @@ class Scraper:
 
         data = {}
         for i in [i for i in soup.find_all(class_="weekday") if i['class'] in [['weekday', 'month'], ['month', 'weekday']] and len(i['id']) > 4]:
-            formattedDate = datetime.strptime(i['this_date'],'%m/%d/%y').strftime('%Y-%m-%d')
+            formattedDate = datetime.strptime(i['this_date'], '%m/%d/%y').strftime('%Y-%m-%d')
 
             if self.menu in titles:
                 data[formattedDate] = self.prettify(i)
@@ -80,7 +80,9 @@ class Scraper:
         # in case the user selected one is unavailable
         titles = []
         r = re.compile('menu-([^location].*)')
-        for i in soup.find('div', class_="content").find_all("div", class_="menu-location"):
+        print(soup.find('div', class_="weekday month"))
+        for i in soup.find('div', class_='weekday month').find('div', class_="content").find_all("div", class_="menu-location"):
+            print(i['class'])
             titles.append(next(filter(r.match, i['class'])).replace('menu-', ''))
 
         return titles

@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+url = "https://www.piwheels.org/simple"
+name = "piwheels"
+verify_ssl = true
+
 [dev-packages]
 
 [packages]
@@ -13,4 +18,4 @@ dominate = "*"
 python-dateutil = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.7"
