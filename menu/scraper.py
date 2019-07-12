@@ -80,9 +80,7 @@ class Scraper:
         # in case the user selected one is unavailable
         titles = []
         r = re.compile('menu-([^location].*)')
-        print(soup.find('div', class_="weekday month"))
-        for i in soup.find('div', class_='weekday month').find('div', class_="content").find_all("div", class_="menu-location"):
-            print(i['class'])
+        for i in soup.find('div', class_="content").find_all("div", class_="menu-location")::
             titles.append(next(filter(r.match, i['class'])).replace('menu-', ''))
 
         return titles
