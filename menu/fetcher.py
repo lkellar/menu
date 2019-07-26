@@ -25,36 +25,12 @@ class Fetcher:
         return self.prepAndGet(c, False, monday, friday)
 
     def fetchFromDatabase(self, c: Cursor, start: str, end: str) -> dict:
-        # Getting a list of all dates between start and end
-        base = datetime.strptime(end, '%Y-%m-%d')
-        floor = datetime.strptime(start, '%Y-%m-%d')
-        diff = (base - floor).days
-        date_list = [(base - timedelta(days=x)).strftime('%Y-%m-%d') for x in
-                     range(0, diff+1)]
-
-        # Getting chicken count for each date
-        counts = self.chickenCount(date_list, c)
-
         # Getting all menu data required from Database
         query = "SELECT * from menu where date BETWEEN ? and ?"
         data = c.execute(query, (start, end)).fetchall()
 
         # Formatting the data from the database into a lovely dictionary
-        return {i[0]: {'menu': json.loads(i[1]), 'chicken': {'count': counts[i[0]], 'positive': self.chickenPositive(i[1])}} for i in data}
-
-    def chickenPositive(self, data: str) -> bool:
-        if 'chicken' in data.lower():
-            return True
-        return False
-
-    def chickenCount(self, dates: list, c: Cursor) -> dict:
-        # Takes dates as input and checks how many times chicken has been served for date
-        query = "SELECT COUNT(*) FROM menu WHERE data LIKE '%chicken%' AND date BETWEEN  '%' AND ?"
-        count = {}
-        for i in dates:
-            count[i] = c.execute(query, (i,)).fetchone()[0]
-
-        return count
+        return {i[0]: {'menu': json.loads(i[1])} for i in data}
 
     def validDate(self, c: Cursor, start: str, end: str = None) -> bool:
         # Checks if the date provided is actually in the database
@@ -144,6 +120,4 @@ class Fetcher:
         # user presentable text
         date = datetime.strptime(date, '%Y-%m-%d')
         data = '\n'.join(menuData['menu'])
-        if menuData['chicken']['positive']:
-            data += f'\n\nThis is the {genNumber(menuData["chicken"]["count"])} time we\'ve had chicken this year.'
         return f'The menu for {date.strftime("%A, %B %d, %Y")}:\n{data}'

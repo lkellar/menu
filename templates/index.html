@@ -18,10 +18,6 @@
                     <li>{{ i }}</li>
                 {% endif %}
             {% endfor %}
-            {% if data.chicken.positive %}
-                <h3>Chicken Count</h3>
-                <li>This is the {{ genNumber(data.chicken.count) }} time we've had chicken this year.</li>
-            {% endif %}
         </ul>
     </div>
 {%- endmacro %}
