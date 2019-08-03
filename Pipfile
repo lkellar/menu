@@ -14,10 +14,7 @@ pytest = "*"
 
 [packages]
 requests = "*"
-beautifulsoup4 = "*"
 flask = "*"
-dominate = "*"
-python-dateutil = "*"
 
 [requires]
 python_version = "3.7"
