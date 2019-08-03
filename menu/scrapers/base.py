@@ -3,17 +3,15 @@ from sqlite3 import Cursor
 import urllib.parse
 
 class BaseScraper(ABC):
-    def __init__(self, base_url: str, menu):
+    def __init__(self, base_url: str):
         '''
         The base scraper all sub-scrapers pull from
 
         base_url: base url of the service data is being pulled from. Used to build urls
-        menu: the menu id to scrape.
         table_name: the sql table to store menu data in
         cursor: an sqlite3 cursor connected to the cache db
         '''
         self.base_url = base_url
-        self.menu = menu
 
     def build_url(self, resource: str):
         '''
