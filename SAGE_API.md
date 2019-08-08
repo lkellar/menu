@@ -14,14 +14,10 @@ So, technically there are multiple ways to use this endpoint, including renewing
 
 #### Parameters
 * `grant` (String): Set this to `password`
-* `refreshToken` (String): This is used to renew an exisitng token, just leave it blank
-* `simpleLogin` (Boolean): This is set to `false` as we are logging in with credentials.
 
 ```json
 {
-    "grant": "password",
-    "refreshToken": "",
-    "simpleLogin": false
+    "grant": "password"
 }
 ```
 #### Authentication
@@ -226,14 +222,14 @@ The access token from the `/login` request must be provided as a Bearer token
 }
 ```
 
-### `/getMenuItems` (POST)
+### `/getmenuitems` (POST)
 Pass in a week, and get food served that week
 
 Instead of a date based (EX: 2019-08-12), this API uses a week/date system. So, the week in which `menuFirstDate` param found in `/getmenus` falls, is the 0th week. The week after that is week 1, and so on.
 
 Sunday is day 0, Monday is day 1, etc, and Saturday is day 6.
 
-#### Query Args
+#### JSON Params
 * `id` (Number): A menu id found in `/getmenus`
 * `week` (Number): Which week to get menu data for
 * `day` (Number) (Optional): The day of the week to request menu data for. Appears to be optional, as omitting this parameter has no effect.

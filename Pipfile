@@ -9,8 +9,9 @@ name = "piwheels"
 verify_ssl = true
 
 [dev-packages]
-pylint = "*"
 pytest = "*"
+pylint = "*"
+rope = "*"
 
 [packages]
 requests = "*"
