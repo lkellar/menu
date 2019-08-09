@@ -26,9 +26,8 @@ def test_build_url():
 @pytest.fixture
 def sage_scraper() -> SageScraper:
     # Generates a dummy SageScraper used for testing
-    cursor = sqlite3.connect(":memory:").cursor()
     config = SageConfig('test@example.com', 'test1234', 1234, 12345)
-    return SageScraper(config, 'sage_testing', cursor)
+    return SageScraper(config, 'sage_testing')
 
 
 def test_sage_login(sage_scraper, monkeypatch):

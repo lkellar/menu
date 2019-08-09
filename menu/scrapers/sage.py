@@ -55,6 +55,17 @@ class SageDateHandler:
         # If the menu_first_date is already sunday, no need to alter it
         return menu_first_date
 
+    def get_current_week(self) -> int:
+        '''
+        Gets the current date, and figures out what the current sage week is
+
+        returns: current sage week
+        '''
+        current_date = date.today()
+        sage_date = self.date_to_sage(current_date)
+
+        return sage_date['week']
+
     def generate_date_list(self, week: int) -> list:
         '''
         Input a week number, and return an array that corresponds the weekday
@@ -103,7 +114,7 @@ class SageDateHandler:
 
 
 class SageScraper(BaseScraper):
-    def __init__(self, config: SageConfig, table_name: str, cursor: Cursor):
+    def __init__(self, config: SageConfig, table_name: str):
         '''
         Sets up a scraper conforming to BaseScraper
 
@@ -113,7 +124,6 @@ class SageScraper(BaseScraper):
         '''
         self.config = config
         self.table_name = table_name
-        self.cursor = cursor
         self.session = Session()
         self.base_url = 'https://sagedining.com/rest/SageRest/v1/public/customerapp'
         super().__init__(self.base_url)
@@ -136,9 +146,10 @@ class SageScraper(BaseScraper):
 
         menu_items = []
 
+        current_week = date_handler.get_current_week()
+
         # For all the weeks, run get_menu_items for that week
-        # TODO don't let it scrape past data
-        for i in range(0, int(menu['cycleLength'])):
+        for i in range(current_week, int(menu['cycleLength'])):
             menu_items += self.get_menu_items(menu['id'], i, date_handler)
 
 
