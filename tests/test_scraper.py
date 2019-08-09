@@ -3,6 +3,15 @@ from datetime import date
 import pytest
 from menu.scrapers.base import BaseScraper
 from menu.scrapers.sage import SageScraper, SageConfig, SageDateHandler, SageDateRangeError
+from menu.models import SageMenuItem
+
+# The example menu_item response from the docs
+EXAMPLE_MENU_ITEM_RESPONSE = {"error":False, "items":[
+    {"id":"294260406", "menuId":"90945", "recipeId":"127972", "day":"1", "week":"0", "meal":"1",
+     "station":"0", "card":"0", "name":"Corn Chowder", "desc":"", "price":"0.00", "dot":2,
+     "featured":False, "rating":-1, "popular":True,
+     "allergens":[{"id":"41"}, {"id":"161"}, {"id":"611"}, {"id":"999999"}],
+     "compositeItem":False}]}
 
 def test_build_url():
     # Tests the build_url function of BaseScraper
@@ -26,8 +35,9 @@ def test_build_url():
 @pytest.fixture
 def sage_scraper() -> SageScraper:
     # Generates a dummy SageScraper used for testing
+    cursor = sqlite3.connect(':memory:').cursor()
     config = SageConfig('test@example.com', 'test1234', 1234, 12345)
-    return SageScraper(config, 'sage_testing')
+    return SageScraper(config, 'sage_testing', cursor)
 
 
 def test_sage_login(sage_scraper, monkeypatch):
@@ -87,13 +97,7 @@ def test_sage_get_menu_items(sage_scraper, sage_date_handler, monkeypatch):
         @staticmethod
         def json():
             # The response below is literally just the example response fron the docs
-            return {"error":False, "items":[{"id":"294260406", "menuId":"90945",
-                                             "recipeId":"127972", "day":"1", "week":"0", "meal":"1",
-                                             "station":"0", "card":"0", "name":"Corn Chowder",
-                                             "desc":"", "price":"0.00", "dot":2, "featured":False,
-                                             "rating":-1, "popular":True,
-                                             "allergens":[{"id":"41"}, {"id":"161"}, {"id":"611"},
-                                                          {"id":"999999"}], "compositeItem":False}]}
+            return EXAMPLE_MENU_ITEM_RESPONSE
 
 
     def mock_get_menu_items(url: str, json: dict):
@@ -106,14 +110,17 @@ def test_sage_get_menu_items(sage_scraper, sage_date_handler, monkeypatch):
     # patch up the scraper to use testing data
     monkeypatch.setattr(sage_scraper.session, 'post', mock_get_menu_items)
 
-    response = sage_scraper.get_menu_items(90945, 0, sage_date_handler)
-
-    # verifying that the function added the custom date key/value
-    assert 'date' in response[0]
-    assert response[0]['date'] == '2019-08-12'
+    response = sage_scraper.get_menu_items(90945, 0)
 
     # verifying the data matches the example data
     assert response[0]['id'] == '294260406'
+
+def test_sage_format_data_for_storage(sage_date_handler):
+    formatted_item = SageScraper.format_data_for_storage(EXAMPLE_MENU_ITEM_RESPONSE['items'],
+                                                         sage_date_handler)[0]
+    assert isinstance(formatted_item, SageMenuItem)
+    assert isinstance(formatted_item.date, date)
+    assert isinstance(formatted_item.id, int)
 
 def test_sage_first_date_parser():
     # Tests the SageDateHandler.parse_first_date function

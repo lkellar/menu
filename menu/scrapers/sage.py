@@ -1,8 +1,10 @@
 from sqlite3 import Cursor
+import json
 from dataclasses import dataclass
 from datetime import timedelta, datetime, date
 from requests import Session
 from menu.scrapers.base import BaseScraper
+from menu.models import SageMenuItem
 
 @dataclass
 class SageConfig:
@@ -18,6 +20,7 @@ class SageConfig:
     password: str
     unit_id: int
     menu_id: int
+
 
 class SageDateHandler:
     '''
@@ -78,7 +81,7 @@ class SageDateHandler:
         date_list = []
         sunday = self.sage_to_date(week, 0)
         for i in range(0, 7):
-            date = (sunday + timedelta(days=i)).strftime('%Y-%m-%d')
+            date = (sunday + timedelta(days=i))
             date_list.append(date)
 
         return date_list
@@ -114,7 +117,7 @@ class SageDateHandler:
 
 
 class SageScraper(BaseScraper):
-    def __init__(self, config: SageConfig, table_name: str):
+    def __init__(self, config: SageConfig, table_name: str, cursor: Cursor):
         '''
         Sets up a scraper conforming to BaseScraper
 
@@ -125,6 +128,7 @@ class SageScraper(BaseScraper):
         self.config = config
         self.table_name = table_name
         self.session = Session()
+        self.cursor = cursor
         self.base_url = 'https://sagedining.com/rest/SageRest/v1/public/customerapp'
         super().__init__(self.base_url)
 
@@ -150,7 +154,7 @@ class SageScraper(BaseScraper):
 
         # For all the weeks, run get_menu_items for that week
         for i in range(current_week, int(menu['cycleLength'])):
-            menu_items += self.get_menu_items(menu['id'], i, date_handler)
+            menu_items += self.get_menu_items(menu['id'], i)
 
 
     def login(self, email: str, password: str) -> str:
@@ -196,15 +200,14 @@ class SageScraper(BaseScraper):
 
         return menus[menu_id]
 
-    def get_menu_items(self, menu_id: int, week: int, date_handler: SageDateHandler):
+    def get_menu_items(self, menu_id: int, week: int) -> list:
         '''
         Takes a Sage Week number and returns the menu data for that week with iso formatted dates
 
         menu_id: the id of the menu to get data for
         week: the week to get menu data for
 
-        returns: a dict with a date in YYYY-MM-DD format as a key,
-            and an array of food item dicts as the value
+        returns: an array of menu items from the server. the menu items match the example in the docs
         '''
         payload = {'id': menu_id, 'week': week}
         # Hit the /getMenusItems API
@@ -214,18 +217,38 @@ class SageScraper(BaseScraper):
             # If the api raises an error, we raise it as well
             raise SageAPIError(response['reason'])
 
+        return response['items']
+
+    @staticmethod
+    def format_data_for_storage(menu_data: list, date_handler: SageDateHandler) -> list:
+        # Grabbing the week off the first menu item to gen a date list
+        # All menu items should have the same week
+        week = int(menu_data[0]['week'])
+
         # Fetching an array of the dates in that week: ['2019-08-18, ...]
         # so we can match up the sage date in the item to a real date
         week_dates = date_handler.generate_date_list(week)
 
-        menu_items = []
+        formatted_menu_items = []
 
-        for item in response['items']:
-            date = week_dates[int(item['day'])]
-            item['date'] = date
-            menu_items.append(item)
+        for i in menu_data:
+            # Getting the real date determined by the weekday on item for use in the SageMenuTiem
+            date = week_dates[int(i['day'])]
 
-        return menu_items
+            # This blob here turns the json response into a model we can put in the db
+            # As it satisfies the named parameters, it removes them from the item object,
+            # so all the remaining item object key/values can be put into a misc object,
+            # if they are to be needed down the road
+            formatted_item = SageMenuItem(id=int(i.pop('id')), menu_id=int(i.pop('menuId')),
+                             recipe_id=int(i.pop('recipeId')), day=int(i.pop('day')),
+                             week=int(i.pop('week')), meal=int(i.pop('meal')),
+                             station=int(i.pop('station')), name=i.pop('name'),
+                             allergens=json.dumps(i.pop('allergens')), date=date,
+                             misc=json.dumps(i))
+
+            formatted_menu_items.append(formatted_item)
+
+        return formatted_menu_items
 
 
 class SageDateRangeError(BaseException):

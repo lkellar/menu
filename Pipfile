@@ -16,6 +16,7 @@ rope = "*"
 [packages]
 requests = "*"
 flask = "*"
+flask-sqlalchemy = "*"
 
 [requires]
 python_version = "3.7"
