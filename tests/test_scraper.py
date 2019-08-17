@@ -1,9 +1,8 @@
-import sqlite3
 from datetime import date
 import pytest
 from menu.scrapers.base import BaseScraper
 from menu.scrapers.sage import SageScraper, SageConfig, SageDateHandler, SageDateRangeError
-from menu.models import SageMenuItem
+from menu.models import db
 
 # The example menu_item response from the docs
 EXAMPLE_MENU_ITEM_RESPONSE = {"error":False, "items":[
@@ -34,10 +33,8 @@ def test_build_url():
 
 @pytest.fixture
 def sage_scraper() -> SageScraper:
-    # Generates a dummy SageScraper used for testing
-    cursor = sqlite3.connect(':memory:').cursor()
     config = SageConfig('test@example.com', 'test1234', 1234, 12345)
-    return SageScraper(config, 'sage_testing', cursor)
+    return SageScraper(config, db)
 
 
 def test_sage_login(sage_scraper, monkeypatch):
@@ -90,7 +87,7 @@ def test_sage_get_menu(sage_scraper, monkeypatch):
     assert menu['id'] == '12345'
     assert menu['schoolId'] == '1234'
 
-def test_sage_get_menu_items(sage_scraper, sage_date_handler, monkeypatch):
+def test_sage_get_menu_items(sage_scraper, monkeypatch):
     # tests the get_menu_items function of SageScraper
     class SageGetMenuItemsMockResponse:
         # Mock class to mock the /getMenuItems endpoint
@@ -118,9 +115,9 @@ def test_sage_get_menu_items(sage_scraper, sage_date_handler, monkeypatch):
 def test_sage_format_data_for_storage(sage_date_handler):
     formatted_item = SageScraper.format_data_for_storage(EXAMPLE_MENU_ITEM_RESPONSE['items'],
                                                          sage_date_handler)[0]
-    assert isinstance(formatted_item, SageMenuItem)
-    assert isinstance(formatted_item.date, date)
-    assert isinstance(formatted_item.id, int)
+    assert isinstance(formatted_item, dict)
+    assert isinstance(formatted_item['date'], date)
+    assert isinstance(formatted_item['id'], int)
 
 def test_sage_first_date_parser():
     # Tests the SageDateHandler.parse_first_date function

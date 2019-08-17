@@ -1,8 +1,8 @@
-from sqlite3 import Cursor
 import json
 from dataclasses import dataclass
 from datetime import timedelta, datetime, date
 from requests import Session
+from flask_sqlalchemy import SQLAlchemy
 from menu.scrapers.base import BaseScraper
 from menu.models import SageMenuItem
 
@@ -117,7 +117,7 @@ class SageDateHandler:
 
 
 class SageScraper(BaseScraper):
-    def __init__(self, config: SageConfig, table_name: str, cursor: Cursor):
+    def __init__(self, config: SageConfig, db: SQLAlchemy):
         '''
         Sets up a scraper conforming to BaseScraper
 
@@ -126,9 +126,8 @@ class SageScraper(BaseScraper):
         cursor: an sqlite3 cursor connected to the cache db
         '''
         self.config = config
-        self.table_name = table_name
         self.session = Session()
-        self.cursor = cursor
+        self.db = db
         self.base_url = 'https://sagedining.com/rest/SageRest/v1/public/customerapp'
         super().__init__(self.base_url)
 
@@ -155,6 +154,10 @@ class SageScraper(BaseScraper):
         # For all the weeks, run get_menu_items for that week
         for i in range(current_week, int(menu['cycleLength'])):
             menu_items += self.get_menu_items(menu['id'], i)
+
+        formatted_menu_items = self.format_data_for_storage(menu_items, date_handler)
+
+        self.save(formatted_menu_items)
 
 
     def login(self, email: str, password: str) -> str:
@@ -207,7 +210,8 @@ class SageScraper(BaseScraper):
         menu_id: the id of the menu to get data for
         week: the week to get menu data for
 
-        returns: an array of menu items from the server. the menu items match the example in the docs
+        returns: an array of menu items from the server. the menu items match the
+        example in the docs
         '''
         payload = {'id': menu_id, 'week': week}
         # Hit the /getMenusItems API
@@ -239,16 +243,28 @@ class SageScraper(BaseScraper):
             # As it satisfies the named parameters, it removes them from the item object,
             # so all the remaining item object key/values can be put into a misc object,
             # if they are to be needed down the road
-            formatted_item = SageMenuItem(id=int(i.pop('id')), menu_id=int(i.pop('menuId')),
-                             recipe_id=int(i.pop('recipeId')), day=int(i.pop('day')),
-                             week=int(i.pop('week')), meal=int(i.pop('meal')),
-                             station=int(i.pop('station')), name=i.pop('name'),
-                             allergens=json.dumps(i.pop('allergens')), date=date,
-                             misc=json.dumps(i))
+            formatted_item = {'id': int(i.pop('id')), 'menu_id': int(i.pop('menuId')),
+                              'recipe_id': int(i.pop('recipeId')), 'day': int(i.pop('day')),
+                              'week': int(i.pop('week')), 'meal': int(i.pop('meal')),
+                              'station': int(i.pop('station')), 'name': i.pop('name'),
+                              'allergens': json.dumps(i.pop('allergens')), 'date': date,
+                              'misc': json.dumps(i)}
 
             formatted_menu_items.append(formatted_item)
 
         return formatted_menu_items
+
+    def save(self, menu_data: list):
+        '''
+        Takes menu data and stores it in the db using the provided SQLAlchemy Instance
+
+        menu_data: list: A list of properly formatted SageMenuItems
+        db: SQLAlchemy Instance
+        '''
+        # creates an inserter object so duplicates replace their predecessor
+        inserter = SageMenuItem.insert().prefix_with('OR REPLACE')
+        self.db.session.execute(inserter, menu_data)
+        self.db.session.commit()
 
 
 class SageDateRangeError(BaseException):
