@@ -9,7 +9,6 @@ name = "piwheels"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
 pylint = "*"
 rope = "*"
 
@@ -17,6 +16,7 @@ rope = "*"
 requests = "*"
 flask = "*"
 flask-sqlalchemy = "*"
+pytz = "*"
 
 [requires]
 python_version = "3.7"

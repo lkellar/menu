@@ -151,13 +151,13 @@ class SageScraper(BaseScraper):
 
         current_week = date_handler.get_current_week()
 
-        # For all the weeks, run get_menu_items for that week
+        # For all the weeks, run get_menu_items for that week and format the data
         for i in range(current_week, int(menu['cycleLength'])):
-            menu_items += self.get_menu_items(menu['id'], i)
+            raw_data = self.get_menu_items(menu['id'], i)
+            if raw_data:
+                menu_items += self.format_data_for_storage(raw_data, date_handler)
 
-        formatted_menu_items = self.format_data_for_storage(menu_items, date_handler)
-
-        self.save(formatted_menu_items)
+        self.save(menu_items)
 
 
     def login(self, email: str, password: str) -> str:
