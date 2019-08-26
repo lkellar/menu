@@ -52,12 +52,12 @@ class Fetcher:
         for key, value in grouped_response.items():
             # for each day, group the menu items by meal
             grouped_value = group_by_key(value, 'meal')
-            
+
             # iterate through the meals
             for sub_key, sub_value in grouped_value.items():
                 # for each meal, group the menu items by station
                 grouped_value[sub_key] = group_by_key(sub_value, 'station')
-            
+
             grouped_response[key] = grouped_value
 
         return grouped_response
@@ -65,7 +65,7 @@ class Fetcher:
 
 def group_by_key(data: list, key: str) -> dict:
     '''
-    Takes a list of dicts, groups the dicts into 'buckets' determined by a key in the dict, 
+    Takes a list of dicts, groups the dicts into 'buckets' determined by a key in the dict,
     then returns the bucket.
 
     data: list, A list of dicts
