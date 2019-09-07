@@ -261,6 +261,19 @@ class SageScraper(BaseScraper):
         menu_data: list: A list of properly formatted SageMenuItems
         db: SQLAlchemy Instance
         '''
+
+        # get all unique dates in the menu_data 
+        unique_dates = set([i['date'] for i in menu_data])
+
+        # then, with those unique dates, remove all menu_data that has the same date as the data
+        # we are about to insert
+        # this is done because sometimes sage changes their menus, and if you leave in existing
+        # entries, you'll have extra entries for a given day that aren't accurate
+        delete_query = SageMenuItem.delete().where(SageMenuItem.c.date.in_(unique_dates))
+
+        self.db.session.execute(delete_query)
+        self.db.session.commit()
+
         # creates an inserter object so duplicates replace their predecessor
         inserter = SageMenuItem.insert().prefix_with('OR REPLACE')
         self.db.session.execute(inserter, menu_data)
