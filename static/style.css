@@ -3,127 +3,40 @@ body {
     font-family: sans-serif;
 }
 
-#main {
+.surround {
+    text-align: center;
+    background-color: #FFFFFF;
+    border-radius: 50px;
+    padding: 0.5em 1em 1em;
+    width: 95%;
+    margin: 0 auto;
+}
+
+.stations {
+    margin: 0 10%;
+    align-items: flex-start;
     display: flex;
     flex-flow: row wrap;
-    margin: 0 4vw 1vw 4vw
 }
 
-.day {
-    width: 27vw;
+.double-station, .station {
+
+    margin: 0 auto;
+}
+
+.station {
+    border: solid;
+    padding: 1em 2em;
     border-radius: 50px;
-    background-color: white;
-    padding: 1% 1% 0 1%;
-    display: none;
-    text-align: center;
-    margin: 0 0.5vw;
-    height: auto;
+    margin: 2em;
+    flex: auto;
 }
 
-
-#current {
-    display: inline-block;
-}
-
-.visible {
-    display: inline-block;
-}
-
-ul {
+.station ul {
     list-style-type: none;
     padding: 0;
-}
 
-li {
-    padding: 1% 0;
-}
 
-h2 {
-    margin: 0 10%;
-    font-size: x-large;
-    height: auto;
-}
-
-footer {
-    text-align: center;
-    background: white;
-    border-radius: 50px;
-    padding: 1rem;
-    width: 40%;
-    margin: 0 30%;
-}
-
-.arrow {
-    width: 3vw;
-    position: absolute;
-    bottom: 50vh;
-    margin: 0 0.5vw
-}
-
-#left {
-    left: 0;
-}
-
-#right {
-    right: 0;
-}
-
-.hidden {
-    background-color: #c4c4c4;
-}
-
-@media only screen and (orientation: portrait) {
-    .visible {
-      display: none;
-    }
-    #current {
-        width: 90vw;
-        margin: 0 5vw;
-        padding: 1%;
-    }
-
-    footer {
-        width: 80vw;
-        margin: 0 auto;
-    }
-}
-
-/* Darkmode stuff */
-
-@media (prefers-color-scheme: dark) {
-    .day, footer, nav {
-        background-color: #d3d3d3;
-    }
-
-    body, .hidden {
-        background-color: #515151;
-    }
-
-}
-
-nav {
-    padding: 1em;
-    border-radius: 50px;
-    width: 60%;
-    margin: 0 auto 2em;
-    text-align: center;
-}
-
-nav ol {
-    list-style-type: none;
-    padding-left: 0;
-    margin: auto;
-}
-
-nav li {
-    display: inline-block;
-}
-
-nav a::after {
-    display: inline-block;
-    color: #000;
-    content: '>';
-    font-size: 80%;
-    font-weight: bold;
-    padding: 0 3px;
+    font-size: 125%;
+    line-height: 2;
 }

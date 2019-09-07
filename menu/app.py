@@ -1,10 +1,11 @@
 from datetime import date
 import json
 from os import path
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from menu.models import db
 from menu.fetch import Fetcher
+from menu.scrapers.sage import SageConfig, SageScraper
 
 current_dir = path.dirname(path.realpath(__file__))
 
@@ -29,7 +30,8 @@ class CustomJSONEncoder(JSONEncoder):
             return list(iterable)
         return JSONEncoder.default(self, obj)
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../static', static_url_path='/static',
+            template_folder='../templates')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{config["db_path"]}'
 # Turn off the track modifications setting for the db, as it's not used,
 # and by turning it off, we gain performance
@@ -50,12 +52,32 @@ def startup():
     # create a global fetcher for use by all functions
     fetchster = Fetcher(db, config['timezone'])
 
+@app.route('/')
+def index():
+    # The main webview for the menu
+    return render_template('index.html')
+
 
 @app.route('/fetch')
 def fetch_test():
     # A simple /fetch api endpoint used for testing
     # will eventually be fleshed out with params and such
-    return jsonify(fetchster.fetch_days(5))
+    if request.args.get('days'):
+        days = int(request.args.get('days'))
+    else:
+        days = 5
+    
+    return jsonify(fetchster.fetch_days(days))
+
+@app.route('/scrape')
+def scrape_test():
+    # A simple test for scrape or whatever
+    sage_config = SageConfig(config['sage']['email'], config['sage']['password'],
+                             config['sage']['unit_id'], config['sage']['menu_id'])
+
+    sage_scraper = SageScraper(sage_config, db)
+    sage_scraper.scrape()
+    return '200'
 
 
 if __name__ == "__main__":

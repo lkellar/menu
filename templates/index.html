@@ -6,23 +6,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-{% macro genDay(_class, data, date, id=None) %}
-    <div class="{{ _class }}" id="{{ id if id }}">
-        <h2>{{ datetime.strptime(date, '%Y-%m-%d').strftime(
-            '%A, %B %d, %Y') }}</h2>
-        <ul>
-            {% for i in data.menu %}
-                {% if i.startswith('\n') %}
-                    <h3>{{ i.replace('\n','') }}</h3>
-                {% else %}
-                    <li>{{ i }}</li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    </div>
-{%- endmacro %}
-<body onkeydown="keyDown(this, event);">
-<nav>
+<body>
+<!---<nav>
 {# A dynamic navigation bar #}
     <ol>
         {% if url_for('index') != '/' %}
@@ -31,30 +16,63 @@
         <li>Menu</li>
     </ol>
 </nav>
-<img alt="Left Arrow" class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', filename='assets/left.svg') }}">
-<img alt="Right Arrow" class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', filename='assets/right.svg') }}">
-<div id="main">
-    <div class="day before hidden"></div>
-    <div class="day before">
-        <h3>Go left to see previous weeks</h3>
+--->
+<div class="surround">
+    <h1>Wednesday, September 3rd, 2019</h1>
+    <div class="stations">
+        <div class="station">
+            <h2>Brakfast</h3>
+            <ul>
+                <li>Classic Scrambled Eggs</li>
+                <li>Oatmeal</li>
+                <li>Grilled Hash Browns</li>
+                <li>Grilled Breakfast Ham</li>
+            </ul>
+        </div>
+        <div class="double-station">
+            <div class="station">
+                <h2>Lunch: Stock Exchange</h2>
+                <ul>
+                    <li>Hearty Corn & Bacon Chowder</li>
+                </ul>
+            </div>
+            <div class="station">
+                <h2>Lunch: Improvisations</h2>
+                <ul>
+                    <li>Build-Your-Own House Salad</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="station">
+            <h2>Lunch: Improvisations</h2>
+            <ul>
+                <li>Build-Your-Own House Salad</li>
+            </ul>
+        </div>
+
+        <div class="station">
+            <h2>Lunch: Main Ingredient</h2>
+            <ul>
+                <li>Build-Your-Own House Salad</li>
+            </ul>
+        </div>
+        <div class="station">
+            <h2>Lunch</h2>
+            <ul>
+                <li>Yes</li>
+            </ul>
+        </div>
+        <div class="station">
+                <h2>Lunch: Mangia</h2>
+                <ul>
+                    <li>Pizza</li>
+                </ul>
+            </div>
     </div>
-    {% for i in data['before'] %}
-        {{ genDay('day before', data['before'][i], i) }}
-    {% endfor %}
-    {% for i in data['current'] %}
-        {{ genDay('day', data['current'][i], i, id='current') }}
-    {% endfor %}
-    {% for i in data['after'] %}
-        {{ genDay('day after', data['after'][i], i) }}
-    {% endfor %}
-    <div class="day after">
-        <h3>Go right to see future weeks</h3>
-    </div>
-    <div class="day after hidden"></div>
 </div>
-<footer>
-    <p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>. <a href="https://fontawesome.com/license/free">License</a>. No changes to images were made. <br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
-</footer>
-<script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
+<!---<footer>
+    Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
+</footer>--->
 </body>
 </html>

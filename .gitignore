@@ -233,3 +233,4 @@ gen
 *.json
 *.sqlite3
 *.wsgi
+*.sketch
