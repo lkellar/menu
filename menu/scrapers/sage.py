@@ -248,7 +248,7 @@ class SageScraper(BaseScraper):
                               'week': int(i.pop('week')), 'meal': int(i.pop('meal')),
                               'station': int(i.pop('station')), 'name': i.pop('name'),
                               'allergens': json.dumps(i.pop('allergens')), 'date': date,
-                              'misc': json.dumps(i)}
+                              'card': int(i.pop('card')), 'misc': json.dumps(i)}
 
             formatted_menu_items.append(formatted_item)
 
