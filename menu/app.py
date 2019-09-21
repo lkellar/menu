@@ -1,11 +1,11 @@
-from datetime import date
+from datetime import date, datetime
 import json
 from os import path
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
 from menu.models import db
 from menu.fetch import Fetcher
-from menu.scrapers.sage import SageConfig, SageScraper
+from menu.scrapers.sage import SageConfig, SageScraper, DOT_TO_COLORS
 
 current_dir = path.dirname(path.realpath(__file__))
 
@@ -55,7 +55,9 @@ def startup():
 @app.route('/')
 def index():
     # The main webview for the menu
-    return render_template('index.html')
+    menu_data = fetchster.fetch_days(3)
+    return render_template('index.html', menu_data=menu_data, datetime=datetime,
+                           titles=config['sage']['menu_titles'], DOT_TO_COLORS=DOT_TO_COLORS)
 
 
 @app.route('/fetch')
@@ -66,7 +68,7 @@ def fetch_test():
         days = int(request.args.get('days'))
     else:
         days = 5
-    
+
     return jsonify(fetchster.fetch_days(days))
 
 @app.route('/scrape')

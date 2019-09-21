@@ -6,6 +6,11 @@ from flask_sqlalchemy import SQLAlchemy
 from menu.scrapers.base import BaseScraper
 from menu.models import SageMenuItem
 
+# A dict of that corresponds the dot attribute found in a menu item to the allergy colors
+# it needs displayed
+DOT_TO_COLORS = {1: ['red'], 2: ['yellow'], 3: ['green'], 4: ['green', 'yellow'],
+                 5: ['yellow', 'red'], 6: ['green', 'yellow', 'red'], 7: ['green', 'red']}
+
 @dataclass
 class SageConfig:
     '''
@@ -248,7 +253,8 @@ class SageScraper(BaseScraper):
                               'week': int(i.pop('week')), 'meal': int(i.pop('meal')),
                               'station': int(i.pop('station')), 'name': i.pop('name'),
                               'allergens': json.dumps(i.pop('allergens')), 'date': date,
-                              'card': int(i.pop('card')), 'misc': json.dumps(i)}
+                              'card': int(i.pop('card')), 'dot': int(i.pop('dot')),
+                              'misc': json.dumps(i)}
 
             formatted_menu_items.append(formatted_item)
 
@@ -262,8 +268,8 @@ class SageScraper(BaseScraper):
         db: SQLAlchemy Instance
         '''
 
-        # get all unique dates in the menu_data 
-        unique_dates = set([i['date'] for i in menu_data])
+        # get all unique dates in the menu_data
+        unique_dates = {i['date'] for i in menu_data}
 
         # then, with those unique dates, remove all menu_data that has the same date as the data
         # we are about to insert

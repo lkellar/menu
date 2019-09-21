@@ -11,6 +11,7 @@ SageMenuItem = db.Table('sage_menu_item',
                         db.Column('week', db.Integer, nullable=False),
                         db.Column('meal', db.Integer, nullable=False),
                         db.Column('card', db.Integer, nullable=True),
+                        db.Column('dot', db.Integer, nullable=True),
                         db.Column('station', db.Integer, nullable=False),
                         db.Column('name', db.Text, nullable=False),
                         # Allergens is a JSON list of allergen data

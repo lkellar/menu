@@ -6,6 +6,36 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
+{% macro genDay(date, menu_data) %}
+<div class="surround">
+    <h2>{{datetime.strptime(date, '%Y-%m-%d').strftime('%A, %B %d, %Y')}}</h2>
+    <div class="stations">
+        {% for meal, stations in menu_data.items() %}
+            {% if stations | length == 1 %}
+                {{genStation(meal, (stations.values()|list)[0] )}}
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+{%- endmacro %}
+{% macro genStation(title_number, menu_items) %}
+<div class="station">
+    <h2>{{ titles[title_number|int] }}</h2>
+    <ul>
+    {% for i in menu_items|sort(attribute='card') %}
+        <li>
+            {{genDots(i.dot)}} {{ i['name'].replace('&amp;', '&') }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{%- endmacro %}
+{% macro genDots(dot_number) %}
+    <span class="dots">
+        {% for i in DOT_TO_COLORS[dot_number] %}
+            <img class="dot" src="{{ url_for('static', filename='circles/'+i+'.svg') }}" alt="A {{i}} circle">
+        {% endfor %}
+    </span>
+{%- endmacro %}
 <body>
 <!---<nav>
 {# A dynamic navigation bar #}
@@ -17,11 +47,16 @@
     </ol>
 </nav>
 --->
-<div class="surround">
+<main>
+    {% for date, value in menu_data.items() %}
+        {{ genDay(date, value) }}
+    {% endfor %}
+</main>
+<!-- <div class="surround">
     <h1>Wednesday, September 3rd, 2019</h1>
     <div class="stations">
         <div class="station">
-            <h2>Brakfast</h3>
+            <h2>Brakfast</h2>
             <ul>
                 <li>Classic Scrambled Eggs</li>
                 <li>Oatmeal</li>
@@ -70,7 +105,7 @@
                 </ul>
             </div>
     </div>
-</div>
+</div> -->
 <!---<footer>
     Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
 </footer>--->
