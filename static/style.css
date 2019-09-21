@@ -39,3 +39,11 @@ body {
     font-size: 125%;
     line-height: 2;
 }
+
+.dots {
+    display: inline-block;
+}
+
+.dot {
+    vertical-align: middle;
+}
