@@ -3,6 +3,9 @@ import json
 from os import path
 from flask import Flask, jsonify, render_template, request
 from flask.json import JSONEncoder
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
 from menu.models import db
 from menu.fetch import Fetcher
 from menu.scrapers.sage import SageConfig, SageScraper, DOT_TO_COLORS, STATION_TITLES
@@ -14,6 +17,13 @@ with open(path.join(current_dir, '../', 'config.json'), 'r') as f:
 
     # Replace $HERE in a db_path with the path of the config file
     config['db_path'] = config['db_path'].replace('$HERE', path.join(current_dir, '..'))
+
+# If a sentry URL exists, enable sentry error reporting
+if 'sentry_dsn' in config:
+    sentry_sdk.init(
+        dsn=config['sentry_dsn'],
+        integrations=[FlaskIntegration(), SqlalchemyIntegration()]
+    )
 
 # Custom JSON Encoder for flask to format all dates in YYYY-MM-DD format
 class CustomJSONEncoder(JSONEncoder):
@@ -62,9 +72,8 @@ def index():
 
 
 @app.route('/fetch')
-def fetch_test():
-    # A simple /fetch api endpoint used for testing
-    # will eventually be fleshed out with params and such
+def fetch():
+    # A simple fetch api to hit the DB, more coming later.
     if request.args.get('days'):
         days = int(request.args.get('days'))
     else:
