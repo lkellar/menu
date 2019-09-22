@@ -41,77 +41,22 @@
     </span>
 {%- endmacro %}
 <body>
-<!---<nav>
+{% if url_for('index') != '/' %}
+<nav>
 {# A dynamic navigation bar #}
     <ol>
-        {% if url_for('index') != '/' %}
-            <li><a href="/">Home</a></li>
-        {% endif %}
+        <li><a href="/">Home</a></li>
         <li>Menu</li>
     </ol>
 </nav>
---->
+{% endif %}
 <main>
     {% for date, value in menu_data.items() %}
         {{ genDay(date, value) }}
     {% endfor %}
 </main>
-<!-- <div class="surround">
-    <h1>Wednesday, September 3rd, 2019</h1>
-    <div class="stations">
-        <div class="station">
-            <h2>Brakfast</h2>
-            <ul>
-                <li>Classic Scrambled Eggs</li>
-                <li>Oatmeal</li>
-                <li>Grilled Hash Browns</li>
-                <li>Grilled Breakfast Ham</li>
-            </ul>
-        </div>
-        <div class="double-station">
-            <div class="station">
-                <h2>Lunch: Stock Exchange</h2>
-                <ul>
-                    <li>Hearty Corn & Bacon Chowder</li>
-                </ul>
-            </div>
-            <div class="station">
-                <h2>Lunch: Improvisations</h2>
-                <ul>
-                    <li>Build-Your-Own House Salad</li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="station">
-            <h2>Lunch: Improvisations</h2>
-            <ul>
-                <li>Build-Your-Own House Salad</li>
-            </ul>
-        </div>
-
-        <div class="station">
-            <h2>Lunch: Main Ingredient</h2>
-            <ul>
-                <li>Build-Your-Own House Salad</li>
-            </ul>
-        </div>
-        <div class="station">
-            <h2>Lunch</h2>
-            <ul>
-                <li>Yes</li>
-            </ul>
-        </div>
-        <div class="station">
-                <h2>Lunch: Mangia</h2>
-                <ul>
-                    <li>Pizza</li>
-                </ul>
-            </div>
-    </div>
-</div> -->
 <footer>
-    Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
+    Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a>
 </footer>
 </body>
 </html>

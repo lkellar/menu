@@ -19,8 +19,7 @@ body {
     flex-flow: row wrap;
 }
 
-.double-station, .station {
-
+.station {
     margin: 0 auto;
 }
 
@@ -48,8 +47,49 @@ body {
     vertical-align: middle;
 }
 
+nav {
+    padding: 1em;
+    border-radius: 50px;
+    width: 60%;
+    margin: 0 auto 2em;
+    background-color: #FFFFFF;
+    text-align: center;
+}
+
+nav ol {
+    list-style-type: none;
+    padding-left: 0;
+    margin: auto;
+}
+
+nav li {
+    display: inline-block;
+}
+
+nav a::after {
+    display: inline-block;
+    color: #000;
+    content: '>';
+    font-size: 80%;
+    font-weight: bold;
+    padding: 0 3px;
+}
+
+footer {
+    text-align: center;
+    background: white;
+    border-radius: 50px;
+    padding: 1rem;
+    width: 40%;
+    margin: 0 auto;
+}
+
 @media (max-width: 500px) {
     .stations {
         margin: 0 2%;
+    }
+    
+    nav, footer {
+        width: 95% !important;
     }
 }
