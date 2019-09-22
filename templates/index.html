@@ -12,15 +12,19 @@
     <div class="stations">
         {% for meal, stations in menu_data.items() %}
             {% if stations | length == 1 %}
-                {{genStation(meal, (stations.values()|list)[0] )}}
+                {{genStation(meal, -1, (stations.values()|list)[0] )}}
+            {% else %}
+                {% for station_number, menu_items in stations.items() %}
+                    {{genStation(meal, station_number|int, menu_items)}}
+                {% endfor %}
             {% endif %}
         {% endfor %}
     </div>
 </div>
 {%- endmacro %}
-{% macro genStation(title_number, menu_items) %}
+{% macro genStation(meal_title_number, station_title_number, menu_items) %}
 <div class="station">
-    <h2>{{ titles[title_number|int] }}</h2>
+    <h2>{{ titles[meal_title_number|int] }}{{': ' + STATION_TITLES[station_title_number] if station_title_number >= 0 else ''}}</h2>
     <ul>
     {% for i in menu_items|sort(attribute='card') %}
         <li>
@@ -106,8 +110,8 @@
             </div>
     </div>
 </div> -->
-<!---<footer>
+<footer>
     Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
-</footer>--->
+</footer>
 </body>
 </html>

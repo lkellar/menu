@@ -27,8 +27,8 @@ body {
 .station {
     border: solid;
     padding: 1em 2em;
+    margin: 2%;
     border-radius: 50px;
-    margin: 2em;
     flex: auto;
 }
 
@@ -46,4 +46,10 @@ body {
 
 .dot {
     vertical-align: middle;
+}
+
+@media (max-width: 500px) {
+    .stations {
+        margin: 0 2%;
+    }
 }

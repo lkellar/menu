@@ -11,6 +11,10 @@ from menu.models import SageMenuItem
 DOT_TO_COLORS = {1: ['red'], 2: ['yellow'], 3: ['green'], 4: ['green', 'yellow'],
                  5: ['yellow', 'red'], 6: ['green', 'yellow', 'red'], 7: ['green', 'red']}
 
+# A list of all stations, in the correct order
+STATION_TITLES = ['Stock Exchange', 'Improvisations', 'Classic Cuts Deli', 'Main Ingredient',
+                  'Seasonings', 'Crossroads', 'Mangia!', 'Transit Fare', 'P.S.', 'Splashes']
+
 @dataclass
 class SageConfig:
     '''
