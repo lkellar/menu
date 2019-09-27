@@ -3,18 +3,24 @@ from itertools import groupby
 from flask_sqlalchemy import SQLAlchemy
 import pytz
 from menu.models import SageMenuItem
+from menu.scrapers.sage import STATION_TITLES
 
 class Fetcher:
     '''
     A class to handle all the menu data fetching for the app
     '''
-    def __init__(self, db: SQLAlchemy, timezone: str):
+    def __init__(self, db: SQLAlchemy, timezone: str, meal_titles: list):
         # Fetches the db from the models file, initalizes the database, and creates tables
         self.db = db
+        self.meal_titles = meal_titles
 
         self.timezone = pytz.timezone(timezone)
 
-    def fetch_days(self, days: int, start: datetime.date = None):
+    def fetch_days(self, days: int, start: datetime.date = None) -> dict:
+        '''
+        Accepts day count and optional start date and returns menu items grouped by day, meal, and
+        station
+        '''
         if not start:
             # Get the current date/time in the provided timezone
             start = datetime.now(self.timezone)
@@ -61,6 +67,30 @@ class Fetcher:
             grouped_response[key] = grouped_value
 
         return grouped_response
+
+    def wordify(self) -> str:
+        '''
+        Gets the current menu data for today (or tomorrow if it's after lunch time) and makes it
+        human readable
+
+        returns: str, A human readable representation of the menu
+        '''
+        # Fetch menu data, and get the first item in the list, because we are requesting only one
+        # day's worth of data
+        date, menu_data = list(self.fetch_days(1).items())[0]
+
+        date = datetime.strptime(date, '%Y-%m-%d')
+
+        response = f'The menu for {date.strftime("%A, %B %d, %Y")}'
+
+        for meal, meal_value in menu_data.items():
+            response += f'\n\n{self.meal_titles[int(meal)]}'
+            for station, station_value in meal_value.items():
+                response += f'\n\n{STATION_TITLES[int(station)]}'
+                for menu_item in station_value:
+                    response += f'\n{menu_item["name"]}'
+
+        return {"response": response}
 
 
 def group_by_key(data: list, key: str) -> dict:

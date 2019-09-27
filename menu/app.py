@@ -60,7 +60,7 @@ def startup():
     db.create_all()
 
     # create a global fetcher for use by all functions
-    fetchster = Fetcher(db, config['timezone'])
+    fetchster = Fetcher(db, config['timezone'], config['sage']['menu_titles'])
 
 @app.route('/')
 def index():
@@ -73,6 +73,7 @@ def index():
 
 @app.route('/fetch')
 def fetch():
+    # TODO ADD DATE PARAM
     # A simple fetch api to hit the DB, more coming later.
     if request.args.get('days'):
         days = int(request.args.get('days'))
@@ -80,6 +81,11 @@ def fetch():
         days = 5
 
     return jsonify(fetchster.fetch_days(days))
+
+@app.route('/wordify')
+def wordify():
+    # An endpoint for a human readable description of the menu
+    return jsonify(fetchster.wordify())
 
 @app.route('/scrape')
 def scrape_test():
