@@ -68,7 +68,7 @@ def index():
     menu_data = fetchster.fetch_days(5)
     return render_template('index.html', menu_data=menu_data, datetime=datetime,
                            titles=config['sage']['menu_titles'], DOT_TO_COLORS=DOT_TO_COLORS,
-                           STATION_TITLES=STATION_TITLES)
+                           STATION_TITLES=STATION_TITLES, config=config)
 
 
 @app.route('/fetch')

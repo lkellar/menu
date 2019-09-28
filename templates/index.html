@@ -57,6 +57,9 @@
 </main>
 <footer>
     Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a>
+    {% if config.shortcut_url %}
+    <br>Download the <a href="{{config.shortcut_url}}">Shortcut</a> to get the menu with Siri! (iOS 13 or higher)
+    {% endif %}
 </footer>
 </body>
 </html>
