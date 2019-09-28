@@ -6,7 +6,7 @@ This project allows one to host a menu site/api for a Sage Dining menu of their 
 
  It presents data to users with an alternate (or better, depending on your tastes) web view. [See the website section for more info.](#website)
 
- It also has an exciting API (which Sage Dining has, but it's complicated and undocumented) that returns data in a lovely JSON format. [See the API section for more info.](#api)
+ It also has an exciting API (which Sage Dining has, but it's complicated and undocumented) that returns data in a lovely JSON format. [See the API section for more info.](#api-endpoints)
 
  Speaking of Sage's undocumented API, I also reverse engineered the documentation for several Sage API endpoints, so if you'd like to develop something with the official Sage API, [check out the Sage API Documentation](SAGE_API.md)
 
@@ -47,7 +47,7 @@ A config needs to have several components
 * sage: menu_id: The Sage Menu Id for the menu you want to grab. Can be found with the `/getmenus` endpoint frm the [API Docs](SAGE_API.md#getmenus)
 * sage: menu_titles: So I have no way of knowing what the meals should be called, so go to the online sage menu, figure out what the meals are called, and put them in a list, so the web view can use it.
 
-* scrape_key: Some long and complicated string that you will have to use for authentication when requesting a scrape. See below for scraping info or the [`/scrape` endpoint](#scrape) for even more info
+* scrape_key: Some long and complicated string that you will have to use for authentication when requesting a scrape. See below for scraping info or the [`/scrape` endpoint](#scrape-post) for even more info
 * db_path: A path to an sqlite3 db, which should create a new one if none exists. Use $HERE as a shortcut for the directory where the config resides.
 * timezone: A valid [tz database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 * shortcut_url (optional): If you have a Siri Shortcut for clients to use to hit the api, you can put the URL here
