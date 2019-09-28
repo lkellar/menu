@@ -73,14 +73,24 @@ def index():
 
 @app.route('/fetch')
 def fetch():
-    # TODO ADD DATE PARAM
-    # A simple fetch api to hit the DB, more coming later.
+    # A simple fetch api to hit the DB
+    # Accepts a days param for the amount of days
+    # and a date param for the start date in YYYY-MM-DD format
+    # both parameters are optional
     if request.args.get('days'):
         days = int(request.args.get('days'))
     else:
-        days = 5
+        days = 1
 
-    return jsonify(fetchster.fetch_days(days))
+    start_date = None
+
+    if request.args.get('date'):
+        try:
+            start_date = datetime.strptime(request.args.get('date'), '%Y-%m-%d').date()
+        except ValueError:
+            pass
+
+    return jsonify(fetchster.fetch_days(days, start_date))
 
 @app.route('/wordify')
 def wordify():
