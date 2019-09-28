@@ -97,15 +97,27 @@ def wordify():
     # An endpoint for a human readable description of the menu
     return jsonify(fetchster.wordify())
 
-@app.route('/scrape')
-def scrape_test():
-    # A simple test for scrape or whatever
-    sage_config = SageConfig(config['sage']['email'], config['sage']['password'],
-                             config['sage']['unit_id'], config['sage']['menu_id'])
+@app.route('/scrape', methods=['POST'])
+def scrape():
+    # A function to scrape the Sage if authentication is provided
+    # First check and see if the scrape_key actually exists
+    if 'scrape_key' in config:
+        # If so, check if the user provided scrape key matches our scrape key
+        if request.form.get('scrape_key') == config['scrape_key']:
+            # If so, do some exciting scrpaing
+            sage_config = SageConfig(config['sage']['email'], config['sage']['password'],
+                                     config['sage']['unit_id'], config['sage']['menu_id'])
 
-    sage_scraper = SageScraper(sage_config, db)
-    sage_scraper.scrape()
-    return '200'
+            sage_scraper = SageScraper(sage_config, db)
+            sage_scraper.scrape()
+            # Then return nothing, yes
+            return '', 204
+
+        # If not, tell the user that they did it wrong
+        return 'Incorrect/Missing Scrape Key', 401
+
+    # If not, tell the user that we did it wrong
+    return 'No Scrape Key in config.json 🤷', 501
 
 
 if __name__ == "__main__":
