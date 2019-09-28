@@ -1,98 +1,81 @@
-# mySchoolDining API
-A Nifty API/Website for mySchoolDining
+# Sage Dining Menu Client
+A nifty website/api for Sage Dining menus
 
 ## About
-This project is a Flask web server that fetches, caches, and serves data from MySchoolDining.
+This project allows one to host a menu site/api for a Sage Dining menu of their choice
 
-It presents its data to users via a simplified website. [See Website Section](#website)
+ It presents data to users with an alternate (or better, depending on your tastes) web view. [See the website section for more info.](#website)
 
-It can also present data in pure JSON, for a whole week, for different dates, and even human readable text for serving directly to users [(See Siri Shortcut)](#shortcut)
+ It also has an exciting API (which Sage Dining has, but it's complicated and undocumented) that returns data in a lovely JSON format. [See the API section for more info.](#api-endpoints)
 
-## Installation
+ Speaking of Sage's undocumented API, I also reverse engineered the documentation for several Sage API endpoints, so if you'd like to develop something with the official Sage API, [check out the Sage API Documentation](SAGE_API.md)
 
-To install, clone the project, and install the requirements
+ ## Installation
 
-This project requires Python 3.6 or higher.
+ Installation is quite simple. But, to scrape data, you'll need to start by getting a Sage Dining account. 
+ 
+ Just download their mobile app (no web account creation ☹️), make an account (you can use a disposable email service), and insert the credentials below.
+ 
+ Then, clone the repo and install the requirements.
 
-`pipenv install`
+ This project works with Python 3.7 (maybe 3.6?) and manages dependencies with pipenv, so to install dependencies, just use `pipenv install`.
 
-Create a `config.json` in the project root directory that looks like the one below
-```json
+ Next, create a `config.json` file in the root of the project directory that looks like the one below.
+
+ ```json
 {
-  "cache": "$HERE/cache.sqlite3",
-  "school": "SCHOOL_NAME",
-  "menu": "MENU_NAME"
+    "sage": {
+        "email": "example@example.com",
+        "password": "thisisatest",
+        "unit_id": 1370,
+        "menu_id": 90945,
+        "menu_titles": ["Breakfast", "Lunch"]
+    },
+    "scrape_key": "ofjodsjfijsdifjisdfijdsjffjidj",
+    "db_path": "$HERE/menu.sqlite3",
+    "timezone": "America/Chicago",
+    "shortcut_url": "https://www.icloud.com/shortcuts/33b878254f1042e0808dcd4d114b759b"
 }
-```
-A config needs to have
-* A cache file location, this will be an sqlite3 database. If no database is present, one will be created. Use `$HERE` to represent the directory where the config is in.
-* A school name, this is the `school_name` part of `https://myschooldining.com/school_name`
-* A menu name, on MySchoolDining, there are different menu types sometimes. Identify the id of the desired menu. Example: The ones at [The New School](https://myschooldining.com/thenewschool) at the time of this writing are Dining Room (diningroom), Summer Camps (summercamps), and Preschool (preschool)
+ ```
 
-Then, just run Flask
+A config needs to have several components
 
+* A Sage Section w/ attributes specific to Sage scraping
+* sage: email: An email address associated with a Sage Acccount (see above)
+* sage: password: The password for the Sage account
+* sage: unit_id: The Sage Unit Id for your school. Can be found with the `/findschool` endpoint from the [API Docs](SAGE_API.md#findschool)
+* sage: menu_id: The Sage Menu Id for the menu you want to grab. Can be found with the `/getmenus` endpoint frm the [API Docs](SAGE_API.md#getmenus)
+* sage: menu_titles: So I have no way of knowing what the meals should be called, so go to the online sage menu, figure out what the meals are called, and put them in a list, so the web view can use it.
+
+* scrape_key: Some long and complicated string that you will have to use for authentication when requesting a scrape. See below for scraping info or the [`/scrape` endpoint](#scrape-post) for even more info
+* db_path: A path to an sqlite3 db, which should create a new one if none exists. Use $HERE as a shortcut for the directory where the config resides.
+* timezone: A valid [tz database timezone name](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
+* shortcut_url (optional): If you have a Siri Shortcut for clients to use to hit the api, you can put the URL here
+* sentry_dsn (optional): If you want to use Sentry for error tracking, put the DSN in with `sentry_dsn` as the key.
+
+You're almost there! Then, all you have to do is run Flask
 ```
-export FLASK_APP=menu/app.py
+export FLASK_APP=menu.app
 flask run   
 ```
 
+To scrape the menu, hit the [`/scrape` endpoint](#scrape) with a POST request, with a form body with `scrape_key` as a key, and the scrape key defined in `config.json` as the key
+
 ## Website
-Instead of dealing with the mySchoolDining website, this project provides a nice simplified alternative.
+![menu example](screenshots/home.png)
 
-![example](screenshots/site.png)
-
-Without any parameters, users will be presented with the days menu, and can easily browse the menu for the rest of the week.
-
-Users can browse with the arrows on the site, the arrow keys, or the A and D keys.
-
-Users can also view data from the current month, and one month in advance. 
+It currently shows the current week. There is currently no way to see future weeks, but that is in progress
 
 ## API Endpoints
 
-#### `/api`
-Returns menu for a specified date
+#### `/fetch` (GET)
+Returns menu data for a specified date (or dates)
 ##### Query Args
-* `date` (Number | String): How many days in the future to fetch OR a date in the format yyyy-mm-dd to fetch.
-* `wordify` (Boolean): Whether to make the text human readable (true), or JSON (false)
+* `date`: A date formatted in YYYY-MM-DD to get menu_data for. Default is the first applicable date
+* `days`: The number of days to get data for. If `date` is provided, then it acts as the start date
 
-#### `/week`
-Returns menu for current week in JSON
-##### Query Args
-* `weeks` (Number): How many weeks in the future to fetch
+#### `/scrape` (POST)
+Scrapes Sage Menu Data using data in `config.json`
 
-## Shortcut
-Want to ask Siri for the menu? (iOS 12 only)
-
-Download the Shortcut [here](https://www.icloud.com/shortcuts/7a5784c83c444a80b69bb04efc16a89d)
-
-## Email
-If your school has a tendency to change the menu ID unexpectedly, you can input email credentials to be notified of menu ID changes.
-
-First, put some SMTP email credentials in your config, like the example below
-
-```json
-{
-  "cache": "$HERE/menu.sqlite3",
-  "school": "thenewschool",
-  "menu": "upperschool",
-  "email": {
-    "server": "smtp.fastmail.com",
-    "port": 465,
-    "username": "lucas@lkellar.org",
-    "password": "examplePassword",
-    "to": "lucas@lkellar.org",
-    "from": "server@lkellar.org"
-  }
-}
-```
-
-I would **STRONGLY** reccommend using an App-Specific Password for your email account. Some instructions on getting App-Specific passwords for common providers is listed below
-
-*  [Apple/iCloud](https://support.apple.com/en-us/HT204397)
-*  [Outlook/Hotmail/Any Microsoft](https://support.microsoft.com/en-us/help/12409/microsoft-account-app-passwords-and-two-step-verification)
-*  [Gmail/Google](https://support.google.com/accounts/answer/185833?hl=en)
-*  [FastMail](https://www.fastmail.com/help/clients/apppassword.html)
-
-Once you've got your email information in the config, the application will automatically send emails to the provided address whenever the chosen menu can not be found.
-
-![image of email](screenshots/email.png)
+##### Post Args
+* `scrape_key`: The scrape key found in `config.json`

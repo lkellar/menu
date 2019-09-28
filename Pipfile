@@ -9,13 +9,15 @@ name = "piwheels"
 verify_ssl = true
 
 [dev-packages]
+pylint = "*"
+rope = "*"
 
 [packages]
 requests = "*"
-beautifulsoup4 = "*"
 flask = "*"
-dominate = "*"
-python-dateutil = "*"
+flask-sqlalchemy = "*"
+pytz = "*"
+sentry-sdk = {extras = ["flask", "sqlalchemy"],version = "*"}
 
 [requires]
 python_version = "3.7"

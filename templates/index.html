@@ -6,59 +6,60 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-{% macro genDay(_class, data, date, id=None) %}
-    <div class="{{ _class }}" id="{{ id if id }}">
-        <h2>{{ datetime.strptime(date, '%Y-%m-%d').strftime(
-            '%A, %B %d, %Y') }}</h2>
-        <ul>
-            {% for i in data.menu %}
-                {% if i.startswith('\n') %}
-                    <h3>{{ i.replace('\n','') }}</h3>
-                {% else %}
-                    <li>{{ i }}</li>
-                {% endif %}
-            {% endfor %}
-            {% if data.chicken.positive %}
-                <h3>Chicken Count</h3>
-                <li>This is the {{ genNumber(data.chicken.count) }} time we've had chicken this year.</li>
+{% macro genDay(date, menu_data) %}
+<div class="surround">
+    <h2>{{datetime.strptime(date, '%Y-%m-%d').strftime('%A, %B %d, %Y')}}</h2>
+    <div class="stations">
+        {% for meal, stations in menu_data.items() %}
+            {% if stations | length == 1 %}
+                {{genStation(meal, -1, (stations.values()|list)[0] )}}
+            {% else %}
+                {% for station_number, menu_items in stations.items() %}
+                    {{genStation(meal, station_number|int, menu_items)}}
+                {% endfor %}
             {% endif %}
-        </ul>
+        {% endfor %}
     </div>
+</div>
 {%- endmacro %}
-<body onkeydown="keyDown(this, event);">
+{% macro genStation(meal_title_number, station_title_number, menu_items) %}
+<div class="station">
+    <h2>{{ titles[meal_title_number|int] }}{{': ' + STATION_TITLES[station_title_number] if station_title_number >= 0 else ''}}</h2>
+    <ul>
+    {% for i in menu_items|sort(attribute='card') %}
+        <li>
+            {{genDots(i.dot)}} {{ i['name'].replace('&amp;', '&') }}</li>
+    {% endfor %}
+    </ul>
+</div>
+{%- endmacro %}
+{% macro genDots(dot_number) %}
+    <span class="dots">
+        {% for i in DOT_TO_COLORS[dot_number] %}
+            <img class="dot" src="{{ url_for('static', filename='circles/'+i+'.svg') }}" alt="A {{i}} circle">
+        {% endfor %}
+    </span>
+{%- endmacro %}
+<body>
+{% if url_for('index') != '/' %}
 <nav>
 {# A dynamic navigation bar #}
     <ol>
-        {% if url_for('index') != '/' %}
-            <li><a href="/">Home</a></li>
-        {% endif %}
+        <li><a href="/">Home</a></li>
         <li>Menu</li>
     </ol>
 </nav>
-<img alt="Left Arrow" class="arrow" id="left" onclick="change(false);" src="{{ url_for('static', filename='assets/left.svg') }}">
-<img alt="Right Arrow" class="arrow" id="right" onclick="change(true);" src="{{ url_for('static', filename='assets/right.svg') }}">
-<div id="main">
-    <div class="day before hidden"></div>
-    <div class="day before">
-        <h3>Go left to see previous weeks</h3>
-    </div>
-    {% for i in data['before'] %}
-        {{ genDay('day before', data['before'][i], i) }}
+{% endif %}
+<main>
+    {% for date, value in menu_data.items() %}
+        {{ genDay(date, value) }}
     {% endfor %}
-    {% for i in data['current'] %}
-        {{ genDay('day', data['current'][i], i, id='current') }}
-    {% endfor %}
-    {% for i in data['after'] %}
-        {{ genDay('day after', data['after'][i], i) }}
-    {% endfor %}
-    <div class="day after">
-        <h3>Go right to see future weeks</h3>
-    </div>
-    <div class="day after hidden"></div>
-</div>
+</main>
 <footer>
-    <p>Arrows made by <a href="https://fontawesome.com">Font Awesome</a>. <a href="https://fontawesome.com/license/free">License</a>. No changes to images were made. <br>Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a></p>
+    Source code available at <a href="https://github.com/katzrkool/menu">Github</a>. <a href="https://github.com/katzrkool/menu/blob/master/LICENSE">Project License</a>
+    {% if config.shortcut_url %}
+    <br>Download the <a href="{{config.shortcut_url}}">Shortcut</a> to get the menu with Siri! (iOS 13 or higher)
+    {% endif %}
 </footer>
-<script type="text/javascript" src="{{ url_for('static', filename='main.js')}}"></script>
 </body>
 </html>
