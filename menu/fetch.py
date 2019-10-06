@@ -88,7 +88,7 @@ class Fetcher:
             for station, station_value in meal_value.items():
                 response += f'\n\n{STATION_TITLES[int(station)]}'
                 for menu_item in station_value:
-                    response += f'\n{menu_item["name"]}'
+                    response += f'\n{menu_item["name"].replace("&amp;", "&")}'
 
         return {"response": response}
 
