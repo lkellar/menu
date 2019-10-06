@@ -93,3 +93,15 @@ footer {
         width: 95% !important;
     }
 }
+
+/* Darkmode stuff */
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #515151;
+    }
+
+    .surround, footer, nav {
+        background-color: #d3d3d3 !important;
+    }
+}
