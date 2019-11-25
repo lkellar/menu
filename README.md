@@ -64,7 +64,7 @@ To scrape the menu, hit the [`/scrape` endpoint](#scrape) with a POST request, w
 ## Website
 ![menu example](screenshots/home.png)
 
-It currently shows the current week. There is currently no way to see future weeks, but that is in progress
+It currently shows the current week. There are buttons at the bottom of the page that allow for future and past navigation.
 
 ## API Endpoints
 
@@ -73,6 +73,7 @@ Returns menu data for a specified date (or dates)
 ##### Query Args
 * `date`: A date formatted in YYYY-MM-DD to get menu_data for. Default is the first applicable date
 * `days`: The number of days to get data for. If `date` is provided, then it acts as the start date
+* `offset`: The number of days to skip. So if the next valid dates are 11-28, 11-29, 12-01, 12-02, and you use offset 2, it starts at 12-01
 
 #### `/scrape` (POST)
 Scrapes Sage Menu Data using data in `config.json`

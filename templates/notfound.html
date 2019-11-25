@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Menu Data Not Found!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="surround">
+        <h2>Well, there's no menu data here ¯\_(ツ)_/¯</h2>
+        <div id="time_travel">
+                <a href="?offset={{offset-5}}"><button class="travel">Back</button></a>
+                {% if offset != 0 %}
+                <a href="?offset=0"><button class="travel">Today</button></a>
+                {% endif %}
+                <a href="?offset={{offset+5}}"><button class="travel">Forward</button></a>
+        </div>
+    </div>
+</body>
+</html>

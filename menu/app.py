@@ -65,10 +65,19 @@ def startup():
 @app.route('/')
 def index():
     # The main webview for the menu
-    menu_data = fetchster.fetch_days(5)
+    if request.args.get('offset'):
+        offset = int(request.args.get('offset'))
+    else:
+        offset = 0
+
+    menu_data = fetchster.fetch_days(5, offset=offset)
+
+    if not menu_data:
+        return render_template('notfound.html', offset=offset)
+
     return render_template('index.html', menu_data=menu_data, datetime=datetime,
                            titles=config['sage']['menu_titles'], DOT_TO_COLORS=DOT_TO_COLORS,
-                           STATION_TITLES=STATION_TITLES, config=config)
+                           STATION_TITLES=STATION_TITLES, config=config, offset=offset)
 
 
 @app.route('/fetch')
@@ -79,8 +88,15 @@ def fetch():
     # both parameters are optional
     if request.args.get('days'):
         days = int(request.args.get('days'))
+        if days == 0:
+            return jsonify([])
     else:
         days = 1
+
+    if request.args.get('offset'):
+        offset = int(request.args.get('offset'))
+    else:
+        offset = 0
 
     start_date = None
 
@@ -90,7 +106,7 @@ def fetch():
         except ValueError:
             pass
 
-    return jsonify(fetchster.fetch_days(days, start_date))
+    return jsonify(fetchster.fetch_days(days, start=start_date, offset=offset))
 
 @app.route('/wordify')
 def wordify():
@@ -118,7 +134,6 @@ def scrape():
 
     # If not, tell the user that we did it wrong
     return 'No Scrape Key in config.json 🤷', 501
-
 
 if __name__ == "__main__":
     app.run()

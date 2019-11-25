@@ -60,6 +60,13 @@
     {% if config.shortcut_url %}
     <br>Download the <a href="{{config.shortcut_url}}">Shortcut</a> to get the menu with Siri! (iOS 13 or higher)
     {% endif %}
+    <div id="time_travel">
+            <a href="?offset={{offset-5}}"><button class="travel">Back</button></a>
+            {% if offset != 0 %}
+            <a href="?offset=0"><button class="travel">Today</button></a>
+            {% endif %}
+            <a href="?offset={{offset+5}}"><button class="travel">Forward</button></a>
+    </div>
 </footer>
 </body>
 </html>
