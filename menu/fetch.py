@@ -46,6 +46,9 @@ class Fetcher:
         Returns, a list of dates
         '''
 
+        if offset < 0:
+            offset += 1
+
         if not start:
             start = self.get_default_date()
 
