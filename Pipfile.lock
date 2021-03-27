@@ -229,11 +229,11 @@
                 "sqlalchemy"
             ],
             "hashes": [
-                "sha256:2529ab6f93914d01bcd80b1b16c15a025902350ab19af2033aa5ff797c1600ad",
-                "sha256:ab16b539c40cc18e3dcfec99d0d3fff16337a050eaf79d4503ef2b73af9a7d9e"
+                "sha256:71de00c9711926816f750bc0f57ef2abbcb1bfbdf5378c601df7ec978f44857a",
+                "sha256:9221e985f425913204989d0e0e1cbb719e8b7fa10540f1bc509f660c06a34e66"
             ],
             "index": "pypi",
-            "version": "==0.12.2"
+            "version": "==1.0.0"
         },
         "sqlalchemy": {
             "hashes": [
