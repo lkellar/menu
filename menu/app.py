@@ -49,16 +49,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Use the custom json encoder defined above
 app.json_encoder = CustomJSONEncoder
 
-def startup():
-    # It's alright to not have the global variable defined in module level because the startup
-    # function should ALWAYS run before any other function that needs it
-    #pylint: disable=global-variable-undefined
-    global fetchster
-
+with app.app_context():
     db.init_app(app)
     db.create_all()
 
-    # create a global fetcher for use by all functions
+    global fetchster
     fetchster = Fetcher(db, config['timezone'], config['sage']['menu_titles'])
 
 @app.route('/')
@@ -135,6 +130,4 @@ def scrape():
     return 'No Scrape Key in config.json 🤷', 501
 
 if __name__ == "__main__":
-    with app.app_context():
-        startup()
     app.run()
