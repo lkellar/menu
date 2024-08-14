@@ -2,7 +2,7 @@ from datetime import date, datetime
 import json
 from os import path
 from flask import Flask, jsonify, render_template, request
-from flask.json import JSONEncoder
+from json import JSONEncoder
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
@@ -49,7 +49,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Use the custom json encoder defined above
 app.json_encoder = CustomJSONEncoder
 
-@app.before_first_request
 def startup():
     # It's alright to not have the global variable defined in module level because the startup
     # function should ALWAYS run before any other function that needs it
@@ -136,4 +135,6 @@ def scrape():
     return 'No Scrape Key in config.json 🤷', 501
 
 if __name__ == "__main__":
+    with app.app_context():
+        startup()
     app.run()

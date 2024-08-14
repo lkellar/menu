@@ -297,3 +297,4 @@ Each item also has a `station` item, which the app uses to group similar items t
 7. Transit Fare
 8. P.S.
 9. Splashes
+15. FreeStyle
