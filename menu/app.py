@@ -49,6 +49,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Use the custom json encoder defined above
 app.json_encoder = CustomJSONEncoder
 
+if 'APPLICATION_ROOT' in config:
+    app.config['APPLICATION_ROOT'] = config['APPLICATION_ROOT']
+
 @app.before_first_request
 def startup():
     # It's alright to not have the global variable defined in module level because the startup
