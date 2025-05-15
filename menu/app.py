@@ -2,7 +2,7 @@ from datetime import date, datetime
 import json
 from os import path
 from flask import Flask, jsonify, render_template, request
-from flask.json import JSONEncoder
+from json import JSONEncoder
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from sentry_sdk.integrations.sqlalchemy import SqlalchemyIntegration
@@ -59,10 +59,11 @@ def startup():
     #pylint: disable=global-variable-undefined
     global fetchster
 
+with app.app_context():
     db.init_app(app)
     db.create_all()
 
-    # create a global fetcher for use by all functions
+    global fetchster
     fetchster = Fetcher(db, config['timezone'], config['sage']['menu_titles'])
 
 @app.route('/')
