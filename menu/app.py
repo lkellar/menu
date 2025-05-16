@@ -40,7 +40,7 @@ class CustomJSONEncoder(JSONEncoder):
             return list(iterable)
         return JSONEncoder.default(self, obj)
 
-app = Flask(__name__, static_folder='../static', static_url_path=(config['static_url_path'] if 'static_url_path' in config else '/static'), template_folder='../templates')
+app = Flask(__name__, static_folder='../static', static_url_path='/static', template_folder='../templates')
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{config["db_path"]}'
 # Turn off the track modifications setting for the db, as it's not used,
 # and by turning it off, we gain performance
