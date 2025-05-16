@@ -52,13 +52,6 @@ app.json_encoder = CustomJSONEncoder
 if 'APPLICATION_ROOT' in config:
     app.config['APPLICATION_ROOT'] = config['APPLICATION_ROOT']
 
-@app.before_first_request
-def startup():
-    # It's alright to not have the global variable defined in module level because the startup
-    # function should ALWAYS run before any other function that needs it
-    #pylint: disable=global-variable-undefined
-    global fetchster
-
 with app.app_context():
     db.init_app(app)
     db.create_all()
