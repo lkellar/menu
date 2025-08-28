@@ -13,7 +13,7 @@ DOT_TO_COLORS = {1: ['red'], 2: ['yellow'], 3: ['green'], 4: ['green', 'yellow']
 
 # A list of all stations, in the correct order
 STATION_TITLES = ['Stock Exchange', 'Improvisations', 'Classic Cuts Deli', 'Main Ingredient',
-                  'Seasonings', 'Crossroads', 'Mangia!', 'Transit Fare', 'P.S.', 'Splashes',None,None,None,None,None,'FreeStyle']
+                  'Seasonings', 'Crossroads', 'Mangia!', 'Transit Fare', 'P.S.', 'Splashes',None,None,None,None,None,'FreeStyle',None,None,None,None,"Trattoria", "Ladle & Co."]
 
 @dataclass
 class SageConfig:
